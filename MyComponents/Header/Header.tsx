@@ -7,7 +7,7 @@ import { IoIosSearch } from "react-icons/io";
 import { IoCartOutline } from "react-icons/io5";
 import { AiOutlineUser } from "react-icons/ai";
 import { RxCross1 } from "react-icons/rx";
-import { FaHeart, FaSearch } from "react-icons/fa";
+import { FaHeart } from "react-icons/fa";
 import { Input } from "@/components/ui/input";
 export default function Header() {
   const [isSlided, setIsSlided] = useState(true);
