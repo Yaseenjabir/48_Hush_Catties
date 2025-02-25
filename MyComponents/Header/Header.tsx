@@ -12,7 +12,7 @@ import { Input } from "@/components/ui/input";
 export default function Header() {
   const [isSlided, setIsSlided] = useState(true);
 
-  const [isSearchBarActive, setIsSearchBarActive] = useState(true);
+  const [isSearchBarActive, setIsSearchBarActive] = useState(false);
 
   const menus = [
     { item: "Home", value: "" },
