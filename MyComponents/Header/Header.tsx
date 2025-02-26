@@ -88,8 +88,8 @@ export default function Header() {
           </div>
           <div
             className={`bg-black text-white mx-auto ${
-              isSearchBarActive ? "h-[76px]" : "h-[0px] p-0"
-            } absolute top-[128px] left-0 w-full z-10 transition-all ease-in-out duration-300 overflow-hidden`}
+              isSearchBarActive ? "max-h-screen" : "max-h-0 p-0"
+            } absolute top-[128px] overflow-hidden left-0 w-full z-10 transition-all ease-in-out duration-700`}
           >
             <div className="w-full max-w-[1200px] mx-auto">
               <div className="w-full p-5">
@@ -102,11 +102,111 @@ export default function Header() {
                   />
                 </div>
               </div>
-              <div className="w-full flex flex-col items-center justify-center py-10 px-5 bg-black text-white">
+              {/* <div className="w-full flex flex-col items-center justify-center py-10 px-5 bg-black text-white h-[451px]">
                 <span>
                   No results could be found. Please try again with a different
                   query.
                 </span>
+              </div> */}
+              <div className="bg-black flex flex-col lg:flex-row p-5 h-[451px] lg:gap-10">
+                <div className="w-full lg:w-[20%]">
+                  <h1 className="uppercase font-thin border-b border-b-gray-500 py-2">
+                    Suggestions
+                  </h1>
+                  <div className="w-full py-5 flex gap-3 flex-wrap">
+                    <span className="w-min text-nowrap cursor-pointer hover:underline">
+                      Dress
+                    </span>
+                    <span className="w-min text-nowrap cursor-pointer hover:underline">
+                      clothes
+                    </span>
+                    <span className="w-min text-nowrap cursor-pointer hover:underline">
+                      Lawn
+                    </span>
+                    <span className="w-min text-nowrap cursor-pointer hover:underline">
+                      Abayas
+                    </span>
+                    <span className="w-min text-nowrap cursor-pointer hover:underline">
+                      collections
+                    </span>
+                    <span className="w-min text-nowrap cursor-pointer hover:underline">
+                      New Dresses
+                    </span>
+                    <span className="w-min text-nowrap cursor-pointer hover:underline">
+                      low prices
+                    </span>
+                    <span className="w-min text-nowrap cursor-pointer hover:underline">
+                      2025 best dress
+                    </span>
+                    <span className="w-min text-nowrap cursor-pointer hover:underline">
+                      velvet
+                    </span>
+                  </div>
+                </div>
+                <div className="w-full lg:w-[80%]">
+                  <h1 className="uppercase font-thin border-b border-b-gray-500 py-2">
+                    Products
+                  </h1>
+                  <div className="w-full py-5 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10 overflow-auto max-h-[220px]">
+                    <div className="flex items-center w-full justify-start gap-2 text-sm">
+                      <div>
+                        <Image
+                          src={
+                            "https://heerpret.com/cdn/shop/files/Eminence.webp?v=1739190116&width=100"
+                          }
+                          width={100}
+                          height={100}
+                          alt="fashion"
+                          layout="responsive"
+                        />
+                      </div>
+                      <div>
+                        <h1 className="font-medium">Eminence 2Pc -Pima Lawn</h1>
+                        <span className="text-red-500 font-thin">
+                          Rs.2,995.00
+                        </span>
+                      </div>
+                    </div>
+                    <div className="flex items-center w-full justify-start gap-2 text-sm">
+                      <div>
+                        <Image
+                          src={
+                            "https://heerpret.com/cdn/shop/files/Eminence.webp?v=1739190116&width=100"
+                          }
+                          width={100}
+                          height={100}
+                          alt="fashion"
+                          layout="responsive"
+                        />
+                      </div>
+                      <div>
+                        <h1 className="font-medium">Eminence 2Pc -Pima Lawn</h1>
+                        <span className="text-red-500 font-thin">
+                          Rs.2,995.00
+                        </span>
+                      </div>
+                    </div>
+                    <div className="flex items-center w-full justify-start gap-2 text-sm">
+                      <div>
+                        <Image
+                          src={
+                            "https://heerpret.com/cdn/shop/files/Eminence.webp?v=1739190116&width=100"
+                          }
+                          width={100}
+                          height={100}
+                          alt="fashion"
+                          layout="responsive"
+                        />
+                      </div>
+                      <div>
+                        <h1 className="font-medium">Eminence 2Pc -Pima Lawn</h1>
+                        <span className="text-red-500 font-thin">
+                          Rs.2,995.00
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
