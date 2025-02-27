@@ -29,6 +29,7 @@ import { FaCheck, FaExpandArrowsAlt, FaRegHeart } from "react-icons/fa";
 import { IoShuffleSharp } from "react-icons/io5";
 import PaginationWrapper from "./PaginationWrapper";
 import Filter from "./Filter";
+import Link from "next/link";
 
 export default function Page() {
   const [showFilter, setShowFilter] = useState(false);
@@ -108,7 +109,9 @@ export default function Page() {
                   <IoIosStar className="text-yellow-400" />
                   <span className="text-sm text-gray-600">(07 reviews)</span>
                 </div>
-                <h1 className="text-sm">Morbi vitae mi</h1>
+                <Link href={"/shop/slug"} className="text-sm">
+                  Morbi vitae mi
+                </Link>
                 <div className="flex gap-2 font-medium">
                   <span className="text-gray-400 text-lg relative">
                     $49.90
@@ -190,7 +193,9 @@ export default function Page() {
                   <IoIosStar className="text-yellow-400" />
                   <span className="text-sm text-gray-600">(07 reviews)</span>
                 </div>
-                <h1 className="text-sm">Morbi vitae mi</h1>
+                <Link href={"/shop/slug"} className="text-sm">
+                  Morbi vitae mi
+                </Link>
                 <div className="flex gap-2 font-medium">
                   <span className="text-gray-400 text-lg relative">
                     $49.90
@@ -272,7 +277,9 @@ export default function Page() {
                   <IoIosStar className="text-yellow-400" />
                   <span className="text-sm text-gray-600">(07 reviews)</span>
                 </div>
-                <h1 className="text-sm">Morbi vitae mi</h1>
+                <Link href={"/shop/slug"} className="text-sm">
+                  Morbi vitae mi
+                </Link>
                 <div className="flex gap-2 font-medium">
                   <span className="text-gray-400 text-lg relative">
                     $49.90

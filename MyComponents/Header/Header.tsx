@@ -4,23 +4,24 @@ import React, { useState } from "react";
 import { RxHamburgerMenu } from "react-icons/rx";
 import { ReactTyped } from "react-typed";
 import { IoIosSearch } from "react-icons/io";
-import { IoCartOutline } from "react-icons/io5";
 import { AiOutlineUser } from "react-icons/ai";
 import { RxCross1 } from "react-icons/rx";
 import { FaHeart } from "react-icons/fa";
 import { Input } from "@/components/ui/input";
+import Link from "next/link";
+import Cart from "../GlobalComponents/Cart/Cart";
 export default function Header() {
   const [isSlided, setIsSlided] = useState(true);
 
   const [isSearchBarActive, setIsSearchBarActive] = useState(false);
 
   const menus = [
-    { item: "Home", value: "" },
-    { item: "Shop", value: "" },
-    { item: "About", value: "" },
-    { item: "Contact", value: "" },
-    { item: "Arrivals", value: "" },
-    { item: "Featured", value: "" },
+    { item: "Home", redirectTo: "/" },
+    { item: "Shop", redirectTo: "/shop" },
+    { item: "About", redirectTo: "" },
+    { item: "Contact", redirectTo: "" },
+    { item: "Arrivals", redirectTo: "" },
+    { item: "Featured", redirectTo: "" },
   ];
 
   return (
@@ -53,7 +54,7 @@ export default function Header() {
               {menus.slice(0, 3).map((item: any, index) => {
                 return (
                   <li key={index} className="hover:underline cursor-pointer">
-                    {item.item}
+                    <Link href={item.redirectTo}>{item.item}</Link>
                   </li>
                 );
               })}
@@ -73,7 +74,7 @@ export default function Header() {
               {menus.slice(3, 6).map((item: any, index: number) => {
                 return (
                   <li key={index} className="hover:underline cursor-pointer">
-                    {item.item}
+                    <Link href={item.redirectTo}>{item.item}</Link>
                   </li>
                 );
               })}
@@ -84,7 +85,7 @@ export default function Header() {
               onClick={() => setIsSearchBarActive((prev: boolean) => !prev)}
               className="cursor-pointer"
             />
-            <IoCartOutline className="cursor-pointer" />
+            <Cart />
           </div>
           <div
             className={`bg-black text-white mx-auto ${
@@ -226,7 +227,7 @@ export default function Header() {
         <ul className="mt-10 flex flex-col">
           {menus.map((item: any, index: number) => (
             <li key={index} className="border-b border-gray-400 py-4">
-              {item.item}
+              <Link href={item.redirectTo}>{item.item}</Link>
             </li>
           ))}
         </ul>
