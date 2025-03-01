@@ -1,6 +1,6 @@
 import React from "react";
 import { Playfair_Display } from "next/font/google";
-const playfairDisplay = Playfair_Display({
+export const playfairDisplay = Playfair_Display({
   display: "swap",
   weight: ["400", "500", "600", "700", "800", "900"],
   subsets: ["latin"],

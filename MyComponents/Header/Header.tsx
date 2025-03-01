@@ -51,7 +51,9 @@ export default function Header() {
                 onClick={() => setIsSlided(false)}
               />
               <div className="flex items-center justify-center">
-                <AiOutlineUser className="cursor-pointer hidden md:block text-2xl" />
+                <Link href={"/my-account"}>
+                  <AiOutlineUser className="cursor-pointer hidden md:block text-2xl" />
+                </Link>
                 <FaHeart className="cursor-pointer hidden md:block text-2xl text-red-500" />
               </div>
 

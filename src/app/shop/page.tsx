@@ -2,14 +2,6 @@
 import React, { useState } from "react";
 
 import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
-import { Slash } from "lucide-react";
-import {
   Select,
   SelectContent,
   SelectItem,
@@ -30,26 +22,14 @@ import { IoShuffleSharp } from "react-icons/io5";
 import PaginationWrapper from "./PaginationWrapper";
 import Filter from "./Filter";
 import Link from "next/link";
+import BreadCrumb from "../../../MyComponents/GlobalComponents/BreadCrumb";
 
 export default function Page() {
   const [showFilter, setShowFilter] = useState(false);
 
   return (
     <>
-      <div className="w-full p-5 flex items-center bg-red-700 text-white justify-center text-center flex-col gap-3">
-        <h1 className="text-3xl font-bold ">Shop</h1>
-        <Breadcrumb>
-          <BreadcrumbList>
-            <BreadcrumbItem className="text-white">
-              <BreadcrumbLink href="/">Home</BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator>
-              <Slash className="text-white" />
-            </BreadcrumbSeparator>
-            <BreadcrumbItem className="text-white">Shop</BreadcrumbItem>
-          </BreadcrumbList>
-        </Breadcrumb>
-      </div>
+      <BreadCrumb crumb="shop" title="Shop" />
       <section className="w-full py-10 px-5 max-w-[1100px] mx-auto">
         {/* filters  */}
         <div className="w-full grid grid-cols-2">
