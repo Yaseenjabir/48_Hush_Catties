@@ -37,7 +37,7 @@ export default function FetchGlobalData() {
 
     // If cache is expired or missing, fetch data from API
     try {
-      const res = await apiClient.get(apiEndPoint); // Adjust according to your needs
+      const res = await apiClient.get(apiEndPoint);
 
       if (res.status === 200) {
         const responseData = res.data;

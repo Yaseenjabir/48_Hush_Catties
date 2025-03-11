@@ -19,7 +19,7 @@ import { Modal, ModalContent, ModalFooter, useDisclosure } from "@heroui/react";
 import { AxiosError } from "axios";
 import { useRouter, useSearchParams } from "next/navigation";
 import { apiClient } from "../../../client/axiosClient";
-import { USER_LOGIN_ROUTE } from "@/constants/constants";
+import { setCookie, USER_LOGIN_ROUTE } from "@/constants/constants";
 type BackdropType = "opaque" | "blur" | "transparent" | undefined;
 
 const formSchema = z.object({
@@ -54,9 +54,7 @@ export default function Login({ setShowLogin }: { setShowLogin: any }) {
         headers: {
           "Content-Type": "application/json",
         },
-        withCredentials: true,
       });
-      console.log("res.data : ", res.data);
 
       if (res.status === 200) {
         if (flag === "addtocart") {
@@ -64,9 +62,9 @@ export default function Login({ setShowLogin }: { setShowLogin: any }) {
         } else {
           router.push("/auth");
         }
+        setCookie("authToken", res.data.token, 1);
       }
     } catch (error: unknown) {
-      console.log("error : ", error);
       if (error instanceof AxiosError) {
         console.log(error.response?.data);
         setErrMessage(error.response?.data);
