@@ -56,6 +56,7 @@ export default function Login({ setShowLogin }: { setShowLogin: any }) {
         },
         withCredentials: true,
       });
+      console.log("res.data : ", res.data);
 
       if (res.status === 200) {
         if (flag === "addtocart") {
@@ -65,6 +66,7 @@ export default function Login({ setShowLogin }: { setShowLogin: any }) {
         }
       }
     } catch (error: unknown) {
+      console.log("error : ", error);
       if (error instanceof AxiosError) {
         console.log(error.response?.data);
         setErrMessage(error.response?.data);
