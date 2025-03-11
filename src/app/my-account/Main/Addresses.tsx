@@ -40,13 +40,7 @@ const formSchema = z.object({
 });
 
 export default function Addresses({ data }) {
-  const {
-    shippingAddress,
-    billingAddress,
-  }: { shippingAddress: Address; billingAddress: Address } = data.addresses || {
-    shippingAddress: {},
-    billingAddress: {},
-  };
+  const { shippingAddress = {}, billingAddress = {} } = data.addresses || {};
 
   const dialogRef = useRef<HTMLButtonElement>(null);
   const [selectedAddress, setSelectedAddress] = useState<Address>();
