@@ -59,15 +59,17 @@ export default function Login({ setShowLogin }: { setShowLogin: any }) {
       if (res.status === 200) {
         if (flag === "addtocart") {
           router.push("/shop");
+        } else if (flag === "cart") {
+          router.push("/cart");
         } else {
           router.push("/auth");
         }
+
         setCookie("authToken", res.data.token, 1);
       }
     } catch (error: unknown) {
       if (error instanceof AxiosError) {
-        console.log(error.response?.data);
-        setErrMessage(error.response?.data);
+        setErrMessage(error.response?.data.error);
       } else {
         setErrMessage("Unexpected Error Occur");
       }

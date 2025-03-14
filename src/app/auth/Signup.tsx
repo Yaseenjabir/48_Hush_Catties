@@ -17,7 +17,8 @@ import { ModalBody, Spinner } from "@heroui/react";
 import { Modal, ModalContent, ModalFooter, useDisclosure } from "@heroui/react";
 import { AxiosError } from "axios";
 import { useRouter } from "next/navigation";
-import { USER_SIGNUP_ROUTE } from "@/constants/constants";
+import { setCookie, USER_SIGNUP_ROUTE } from "@/constants/constants";
+import { toast } from "sonner";
 
 const formSchema = z.object({
   firstName: z.string().min(4).max(50),
@@ -50,10 +51,12 @@ export default function Signup({ setShowLogin }: { setShowLogin: any }) {
         headers: {
           "Content-Type": "application/json",
         },
-        withCredentials: true,
       });
+
       if (res.status === 200) {
+        setCookie("authToken", res.data.token, 1);
         router.push("/my-account");
+        toast.success("Your account has been created successfully");
       }
     } catch (error: unknown) {
       if (error instanceof AxiosError) {

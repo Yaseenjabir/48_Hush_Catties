@@ -17,10 +17,21 @@ export const ADD_ITEM_TO_CART = "/api/cart/addItemToCart";
 export const FETCH_CART_ITEMS = "/api/cart/getCartItems";
 export const DELETE_CART_ITEMS = "/api/cart/deleteItem";
 export const CHANGE_QUANTITY = "/api/cart/changeQuantity";
-export const REMOVE_FROM_CART = "/api/cart/deleteItem?productId=";
 
 // address
 export const CREATE_ADDRESS = "/api/address/createAddress";
+
+// payment
+export const CREATE_PAYMENT = "/api/payment/create-payment-intent";
+
+// wishlist
+export const TOGGLE_WISHLIST = "/api/wishlist/toggleWishlist";
+export const GET_WISHLIST = "/api/wishlist/getWishlist";
+
+// order
+export const GET_ALL_ORDERS = "/api/orders/getAllOrders";
+export const GET_SINGLE_ORDERS = "/api/orders/";
+export const UPDATE_STATUS = "/api/orders/updateStatus";
 
 export const categories = [
   "Dress",
@@ -99,4 +110,8 @@ export function setCookie(name: string, value: string, days: number = 1) {
   const expires = new Date();
   expires.setTime(expires.getTime() + days * 24 * 60 * 60 * 1000);
   document.cookie = `${name}=${value}; expires=${expires.toUTCString()}; path=/; Secure; SameSite=None`;
+}
+
+export function deleteCookie(name: string) {
+  document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; Secure; SameSite=None`;
 }

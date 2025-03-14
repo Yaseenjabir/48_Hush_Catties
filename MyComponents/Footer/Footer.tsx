@@ -33,7 +33,6 @@ export default function Footer() {
   ];
 
   return (
-    !pathName.startsWith("/auth") &&
     !pathName.startsWith("/my-account") &&
     !pathName.startsWith("/dashboard") && (
       <footer className="py-10 px-5 bg-[#232323] text-white">

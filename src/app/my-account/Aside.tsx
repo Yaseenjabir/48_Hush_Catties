@@ -1,11 +1,12 @@
 import Image from "next/image";
 import React from "react";
 import { FaShoppingCart, FaUser } from "react-icons/fa";
-import { FaLocationDot } from "react-icons/fa6";
 import { IoIosLogOut } from "react-icons/io";
 import { RiDashboardHorizontalLine } from "react-icons/ri";
 import { RxCross1, RxHamburgerMenu } from "react-icons/rx";
 import { Playfair_Display } from "next/font/google";
+import { deleteCookie } from "@/constants/constants";
+import { useRouter } from "next/navigation";
 const playfairDisplay = Playfair_Display({
   display: "swap",
   weight: ["400", "500", "600", "700", "800", "900"],
@@ -23,15 +24,21 @@ export default function Aside({
   activeTab,
   isSlided,
   setIsSlided,
+  data,
 }: {
   setActiveTab: any;
   activeTab: string;
   isSlided: boolean;
   setIsSlided: any;
+  data: any;
 }) {
+  const router = useRouter();
+
   const handleTabChange = (tab: string) => {
     if (tab === "Logout") {
-      alert("Wait for functionality to be implemented");
+      deleteCookie("authToken");
+      router.push("/auth");
+
       return;
     }
     localStorage.setItem("nav", tab);
@@ -51,21 +58,16 @@ export default function Aside({
     },
     {
       id: 3,
-      name: "Addresses",
-      icon: <FaLocationDot className="text-xl" />,
-    },
-    {
-      id: 4,
       name: "Account details",
       icon: <FaUser className="text-xl" />,
     },
     {
-      id: 5,
+      id: 4,
       name: "Wishlist",
       icon: <RxHamburgerMenu className="text-xl" />,
     },
     {
-      id: 6,
+      id: 5,
       name: "Logout",
       icon: <IoIosLogOut className="text-xl" />,
     },
@@ -94,7 +96,9 @@ export default function Aside({
             />
             <div className="flex items-center gap-2 text-sm">
               <span>Hello</span>
-              <span className="font-bold">yaseenJabir</span>
+              <span className="font-bold">
+                {data?.user?.firstName} {data?.user?.lastName}
+              </span>
             </div>
           </div>
         </div>

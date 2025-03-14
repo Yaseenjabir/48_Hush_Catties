@@ -5,8 +5,6 @@ import Dashboard from "./Main/Dashboard";
 import Orders from "./Main/Orders";
 import { GiHamburgerMenu } from "react-icons/gi";
 import Image from "next/image";
-import { IoMdSunny } from "react-icons/io";
-import Addresses from "./Main/Addresses";
 import ProfileDetails from "./Main/ProfileDetails";
 import Wishlist from "./Main/Wishlist/Wishlist";
 import { GET_USER_PROFILE, getCookie } from "@/constants/constants";
@@ -48,6 +46,7 @@ export default function Page() {
         activeTab={activeTab}
         isSlided={isSlided}
         setIsSlided={setIsSlided}
+        data={data}
       />
       <main className="w-full md:w-[80%] h-screen overflow-y-auto">
         <header className="w-full px-5 py-2 border-b shadow-md flex items-center justify-between">
@@ -62,19 +61,17 @@ export default function Page() {
             alt="logo"
             className="rounded-full"
           />
-          <IoMdSunny className="text-2xl" />
+          {/* <IoMdSunny className="text-2xl" /> */}
         </header>
 
         {activeTab === "Dashboard" ? (
-          <Dashboard />
+          <Dashboard data={data} />
         ) : activeTab === "Orders" ? (
-          <Orders />
-        ) : activeTab === "Addresses" ? (
-          <Addresses data={data} />
+          <Orders data={data} />
         ) : activeTab === "Account details" ? (
           <ProfileDetails data={data} />
         ) : (
-          <Wishlist />
+          <Wishlist data={data} />
         )}
       </main>
     </section>

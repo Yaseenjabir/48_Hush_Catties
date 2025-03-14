@@ -10,17 +10,19 @@ import { FaHeart } from "react-icons/fa";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
 import Cart from "../GlobalComponents/Cart/Cart";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 export default function Header() {
   const [isSlided, setIsSlided] = useState(true);
 
   const [isSearchBarActive, setIsSearchBarActive] = useState(false);
   const pathName = usePathname();
 
+  const router = useRouter();
+
   const menus = [
     { item: "Home", redirectTo: "/" },
     { item: "Shop", redirectTo: "/shop" },
-    { item: "About", redirectTo: "" },
+    { item: "Cart", redirectTo: "cart" },
     { item: "Contact", redirectTo: "" },
     { item: "Arrivals", redirectTo: "" },
     { item: "Featured", redirectTo: "" },
@@ -28,8 +30,7 @@ export default function Header() {
 
   return (
     <>
-      {!pathName.startsWith("/auth") &&
-        !pathName.startsWith("/my-account") &&
+      {!pathName.startsWith("/my-account") &&
         !pathName.startsWith("/dashboard") && (
           <>
             <div className="w-full px-5 py-2 flex items-center justify-center bg-red-700 text-white">
@@ -54,7 +55,13 @@ export default function Header() {
                   <Link href={"/my-account"}>
                     <AiOutlineUser className="cursor-pointer hidden md:block text-2xl" />
                   </Link>
-                  <FaHeart className="cursor-pointer hidden md:block text-2xl text-red-500" />
+                  <FaHeart
+                    onClick={() => {
+                      router.push("/my-account");
+                      localStorage.setItem("nav", "Wishlist");
+                    }}
+                    className="cursor-pointer hidden md:block text-2xl text-red-500"
+                  />
                 </div>
 
                 <div className="items-center justify-center hidden md:flex">
