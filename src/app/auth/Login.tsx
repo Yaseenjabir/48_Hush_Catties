@@ -61,8 +61,11 @@ export default function Login({ setShowLogin }: { setShowLogin: any }) {
           router.push("/shop");
         } else if (flag === "cart") {
           router.push("/cart");
+        } else if (flag === "my-account") {
+          router.push("/my-account");
+          localStorage.setItem("nav", "Wishlist");
         } else {
-          router.push("/auth");
+          router.push("/my-account");
         }
 
         setCookie("authToken", res.data.token, 1);

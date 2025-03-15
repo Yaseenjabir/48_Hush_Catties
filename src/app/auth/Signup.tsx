@@ -13,8 +13,7 @@ import {
 } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
 import { apiClient } from "../../../client/axiosClient";
-import { ModalBody, Spinner } from "@heroui/react";
-import { Modal, ModalContent, ModalFooter, useDisclosure } from "@heroui/react";
+import { Spinner } from "@heroui/react";
 import { AxiosError } from "axios";
 import { useRouter } from "next/navigation";
 import { setCookie, USER_SIGNUP_ROUTE } from "@/constants/constants";
@@ -26,19 +25,10 @@ const formSchema = z.object({
   email: z.string().email("Please write a valid email"),
   password: z.string().min(6).max(50),
 });
-type BackdropType = "opaque" | "blur" | "transparent" | undefined;
 
 export default function Signup({ setShowLogin }: { setShowLogin: any }) {
   const [loading, setLoading] = useState(false);
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const [backdrop, setBackdrop] = useState<BackdropType>("opaque");
-  const [errMessage, setErrMessage] = useState("");
   const router = useRouter();
-
-  const handleOpen = (backdrop) => {
-    setBackdrop(backdrop);
-    onOpen();
-  };
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -60,11 +50,10 @@ export default function Signup({ setShowLogin }: { setShowLogin: any }) {
       }
     } catch (error: unknown) {
       if (error instanceof AxiosError) {
-        setErrMessage(error.response?.data);
+        toast.error(error.response?.data);
       } else {
-        setErrMessage("Unexpected Error Occur");
+        toast.error("Unexpected Error Occur");
       }
-      handleOpen(backdrop);
     } finally {
       setLoading(false);
     }
@@ -185,20 +174,6 @@ export default function Signup({ setShowLogin }: { setShowLogin: any }) {
           </button>
         </div>
       </div>
-      <Modal backdrop={backdrop} isOpen={isOpen} onClose={onClose}>
-        <ModalContent>
-          {(onClose) => (
-            <>
-              <ModalFooter>
-                <ModalBody>{errMessage}</ModalBody>
-                <Button className="bg-red-700 mr-5" onClick={onClose}>
-                  Close
-                </Button>
-              </ModalFooter>
-            </>
-          )}
-        </ModalContent>
-      </Modal>
     </section>
   );
 }

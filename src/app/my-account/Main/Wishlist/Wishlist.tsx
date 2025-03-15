@@ -14,17 +14,34 @@ import { toast } from "sonner";
 import useStore from "@/store/store";
 import { Spinner } from "@heroui/react";
 import Heading from "../Heading";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
 
 const WishlistItem = ({ product }) => {
   const [cartSpinnerIndex, setCartSpinnerIndex] = useState<null | string>(null);
-  const { _id, name, price, stock, imageUrls } = product;
+  const [selectedColor, setSelectedColor] = useState<string>("");
+  const [selectedSize, setSelectedSize] = useState<string>("");
+  const [isDialogOpen, setIsDialogOpen] = useState(false); // State to control dialog visibility
+
+  const { _id, name, price, stock, imageUrls, color, size } = product;
   const { insertItems, removeItem, items } = useStore();
 
   // Check if the product is already in the cart
   const isInCart = items.some((item) => item.productId._id === _id);
 
   // Add to Cart functionality
-  const handleAddToCart = async (productId: string) => {
+  const handleAddToCart = async (
+    productId: string,
+    color: string,
+    size: string
+  ) => {
     const authToken = getCookie("authToken");
     if (!authToken) {
       toast.error("Please log in to add items to your cart");
@@ -34,8 +51,8 @@ const WishlistItem = ({ product }) => {
     setCartSpinnerIndex(productId);
     try {
       const res = await apiClient.post(
-        ADD_ITEM_TO_CART, // Replace with your add to cart endpoint
-        { productId, quantity: 1 },
+        ADD_ITEM_TO_CART,
+        { productId, quantity: 1, color, size },
         {
           headers: {
             Authorization: authToken,
@@ -49,6 +66,7 @@ const WishlistItem = ({ product }) => {
       toast.error("Something went wrong");
     } finally {
       setCartSpinnerIndex(null);
+      setIsDialogOpen(false); // Close the dialog after adding to cart
     }
   };
 
@@ -63,7 +81,7 @@ const WishlistItem = ({ product }) => {
     setCartSpinnerIndex(productId);
     try {
       const res = await apiClient.delete(
-        `${DELETE_CART_ITEMS}?productId=${productId}`, // Replace with your remove from cart endpoint
+        `${DELETE_CART_ITEMS}?productId=${productId}`,
         {
           headers: {
             Authorization: authToken,
@@ -78,10 +96,12 @@ const WishlistItem = ({ product }) => {
       console.error(error);
       toast.error("Something went wrong");
     } finally {
+      setIsDialogOpen(false);
       setCartSpinnerIndex(null);
     }
   };
 
+  // Toggle Wishlist functionality
   const toggleWishlist = async (productId: string) => {
     const authToken = getCookie("authToken");
 
@@ -149,21 +169,95 @@ const WishlistItem = ({ product }) => {
       {cartSpinnerIndex === _id ? (
         <Spinner variant="spinner" /> // Show spinner while processing
       ) : (
-        <button
-          onClick={() =>
-            isInCart ? removeItemFromCart(_id) : handleAddToCart(_id)
-          }
-          disabled={!stock}
-          className={`mt-4 md:mt-0 px-6 py-2 rounded-lg text-sm font-semibold ${
-            stock
-              ? isInCart
-                ? "bg-gray-500 text-white hover:bg-gray-600" // Style for "Remove from Cart"
-                : "bg-blue-500 text-white hover:bg-blue-600" // Style for "Add to Cart"
-              : "bg-gray-300 text-gray-500 cursor-not-allowed" // Style for out of stock
-          } transition-colors`}
-        >
-          {isInCart ? "Remove from Cart" : "Add to Cart"}
-        </button>
+        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+          <DialogTrigger asChild>
+            {isInCart ? (
+              <Button
+                onClick={() => removeItemFromCart(_id)}
+                className={
+                  "py-2 px-4 uppercase text-sm text-nowrap bg-gray-400 text-white"
+                }
+              >
+                Remove from Cart
+              </Button>
+            ) : (
+              <Button
+                className={
+                  "py-2 px-4 uppercase text-sm text-nowrap bg-red-700 text-white"
+                }
+              >
+                Add to Cart
+              </Button>
+            )}
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-[425px]">
+            <DialogHeader>
+              <DialogTitle className="text-lg font-semibold text-center">
+                Select Options
+              </DialogTitle>
+            </DialogHeader>
+            <div className="space-y-6">
+              {/* Color Selection */}
+              <div>
+                <Label className="block text-sm font-medium mb-2">Color</Label>
+                <div className="flex flex-wrap gap-2">
+                  {color.map((colorOption) => (
+                    <Button
+                      key={colorOption}
+                      variant={
+                        selectedColor === colorOption ? "default" : "outline"
+                      }
+                      className={`rounded-full px-4 py-2 text-sm ${
+                        selectedColor === colorOption
+                          ? "bg-blue-600 text-white hover:bg-blue-700"
+                          : "bg-white text-gray-700 hover:bg-gray-100"
+                      }`}
+                      onClick={() => setSelectedColor(colorOption)}
+                    >
+                      {colorOption}
+                    </Button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Size Selection */}
+              <div>
+                <Label className="block text-sm font-medium mb-2">Size</Label>
+                <div className="flex flex-wrap gap-2">
+                  {size.map((sizeOption) => (
+                    <Button
+                      key={sizeOption}
+                      variant={
+                        selectedSize === sizeOption ? "default" : "outline"
+                      }
+                      className={`rounded-full px-4 py-2 text-sm ${
+                        selectedSize === sizeOption
+                          ? "bg-blue-600 text-white hover:bg-blue-700"
+                          : "bg-white text-gray-700 hover:bg-gray-100"
+                      }`}
+                      onClick={() => setSelectedSize(sizeOption)}
+                    >
+                      {sizeOption}
+                    </Button>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Confirm Button */}
+            <div className="mt-6 flex justify-end">
+              <Button
+                onClick={() =>
+                  handleAddToCart(_id, selectedColor, selectedSize)
+                }
+                className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg"
+                disabled={!selectedColor || !selectedSize}
+              >
+                Confirm
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
       )}
     </div>
   );
@@ -175,11 +269,15 @@ const Wishlist = ({ data }) => {
   return (
     <div className="container mx-auto p-4">
       <Heading text="Wishlist" />
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        {wishlist.map((item) => (
-          <WishlistItem key={item._id} product={item.productId} />
-        ))}
-      </div>
+      {wishlist.length === 0 ? (
+        <p>No item added in the wishlist</p>
+      ) : (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          {wishlist.map((item) => (
+            <WishlistItem key={item._id} product={item.productId} />
+          ))}
+        </div>
+      )}
     </div>
   );
 };

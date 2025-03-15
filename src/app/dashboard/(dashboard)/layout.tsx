@@ -20,7 +20,7 @@ const NAVIGATION: Navigation = [
   },
   {
     segment: "dashboard/orders",
-    title: "Active Orders",
+    title: "Orders",
     icon: <TimelineOutlined />,
   },
   {

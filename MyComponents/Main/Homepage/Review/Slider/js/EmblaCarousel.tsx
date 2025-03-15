@@ -19,7 +19,7 @@ const numberWithinRange = (number: number, min: number, max: number): number =>
   Math.min(Math.max(number, min), max);
 
 type PropType = {
-  slides: number[];
+  slides: any;
   options?: EmblaOptionsType;
 };
 
@@ -105,28 +105,29 @@ const EmblaCarousel: React.FC<PropType> = (props) => {
       .on("slideFocus", tweenScale);
   }, [emblaApi, tweenScale]);
 
+  const str = ` Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                  Soluta repellendus minima ullam quae ad dolore, ut expedita
+                  tempora modi voluptate, suscipit odio enim itaque neque`;
+  console.log(str.length);
+
   return (
     <div className="embla">
       <div className="embla__viewport" ref={emblaRef}>
         <div className="embla__container">
-          {slides.map((index) => (
+          {slides.map((item, index) => (
             <div className="embla__slide" key={index}>
               <div className="embla__slide__number border px-5 flex flex-col">
                 <div className="w-28 rounded-full overflow-hidden">
                   <Image
-                    src={
-                      "https://gulaal.pk/cdn/shop/files/png_1_1_4736fe8e-ae63-4f4c-870c-e32011893dc6.png?v=1724044922"
-                    }
+                    src={item.img}
                     alt="image"
                     width={1000}
                     height={1000}
                   />
                 </div>
-                <h1>Noor Zahra</h1>
+                <h1>{item.userName}</h1>
                 <p className="leading-7 text-center text-gray-700 mt-5">
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                  Soluta repellendus minima ullam quae ad dolore, ut expedita
-                  tempora modi voluptate, suscipit odio enim itaque neque
+                  {item.review}
                 </p>
               </div>
             </div>

@@ -4,12 +4,10 @@ import React from "react";
 
 export default function OurBestSelling() {
   return (
-    <section className="w-full flex flex-col lg:flex-row">
+    <section className="w-full flex flex-col lg:flex-row max-w-[1200px] mx-auto">
       <div className="lg:w-[50%]">
         <Image
-          src={
-            "https://heerpret.com/cdn/shop/files/Heer_Pret_women_clothing_brands_in_pakistan.webp?v=1736713522&width=600"
-          }
+          src={"/ourBestSelling.jpg"}
           alt="brand-selling-image"
           height={430}
           width={600}

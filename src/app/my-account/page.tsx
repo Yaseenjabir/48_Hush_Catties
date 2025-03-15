@@ -9,15 +9,21 @@ import ProfileDetails from "./Main/ProfileDetails";
 import Wishlist from "./Main/Wishlist/Wishlist";
 import { GET_USER_PROFILE, getCookie } from "@/constants/constants";
 import { apiClient } from "../../../client/axiosClient";
+import { useRouter } from "next/navigation";
+import { Spinner } from "@heroui/react";
 
 export default function Page() {
   const [activeTab, setActiveTab] = useState("Dashboard");
   const [isSlided, setIsSlided] = useState(true);
 
   const [data, setData] = useState([]);
+  const [loader, setLoader] = useState(true);
+
+  const router = useRouter();
 
   useEffect(() => {
     const fetchData = async () => {
+      setLoader(true);
       const token = getCookie("authToken");
       const res = await apiClient.get(GET_USER_PROFILE, {
         headers: { Authorization: token },
@@ -29,11 +35,16 @@ export default function Page() {
           setActiveTab(nav);
         }
       }
+      setLoader(false);
     };
     fetchData();
   }, []);
 
-  return (
+  return loader ? (
+    <div className="w-full h-screen flex items-center justify-center">
+      <Spinner variant="spinner" />
+    </div>
+  ) : (
     <section
       style={{
         backgroundImage:
@@ -55,11 +66,12 @@ export default function Page() {
             onClick={() => setIsSlided(!isSlided)}
           />
           <Image
-            src={"/logo.png"}
+            onClick={() => router.push("/")}
+            src={"/mainLogo.jpg"}
             width={60}
             height={60}
             alt="logo"
-            className="rounded-full"
+            className="rounded-full cursor-pointer"
           />
           {/* <IoMdSunny className="text-2xl" /> */}
         </header>

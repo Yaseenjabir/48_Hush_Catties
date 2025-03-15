@@ -7,6 +7,15 @@ import { Spinner } from "@heroui/react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { useTheme } from "@mui/material";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export default function OrdersPage() {
   const [data, setData] = React.useState<any>([]);
@@ -14,12 +23,16 @@ export default function OrdersPage() {
   const [loader, setLoader] = React.useState(true);
   const theme = useTheme();
 
+  const [activeStatus, setActiveStatus] = React.useState("processing");
+
   const isDarkMode = theme.palette.mode === "dark";
   React.useEffect(() => {
     async function fetchOrders() {
       try {
         setLoader(true);
-        const res = await apiClient.get(`${GET_ALL_ORDERS}?status=processing`);
+        const res = await apiClient.get(
+          `${GET_ALL_ORDERS}?status=${activeStatus}`
+        );
         console.log("res.data : ", res.data);
         if (res.data.length > 0) {
           const products = res.data?.flatMap((item: any) =>
@@ -43,7 +56,7 @@ export default function OrdersPage() {
       }
     }
     fetchOrders();
-  }, []);
+  }, [activeStatus]);
 
   const router = useRouter();
 
@@ -53,6 +66,25 @@ export default function OrdersPage() {
     <div>No active orders are available</div>
   ) : (
     <div className="container mx-auto px-4 py-8">
+      <div className="w-full flex items-center justify-end mb-10">
+        <Select
+          defaultValue={activeStatus}
+          onValueChange={(val) => setActiveStatus(val)}
+        >
+          <SelectTrigger className="w-[180px]">
+            <SelectValue placeholder="Change status" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              <SelectLabel>Status</SelectLabel>
+              <SelectItem value="processing">Processing</SelectItem>
+              <SelectItem value="shipped">Shipped</SelectItem>
+              <SelectItem value="delivered">Delivered</SelectItem>
+            </SelectGroup>
+          </SelectContent>
+        </Select>
+      </div>
+
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
         {data.length > 0 &&
           data.map((order: any) => (
@@ -86,8 +118,8 @@ export default function OrdersPage() {
                   </p>
                   <span
                     className={`px-3 py-1 rounded-full text-sm font-medium ${
-                      order.status === "Shipped"
-                        ? "bg-green-100 text-green-800"
+                      order.status === "shipped"
+                        ? "bg-green-800 text-white"
                         : order.status === "processing"
                           ? "bg-yellow-100 text-yellow-800"
                           : "bg-gray-100 text-gray-800"

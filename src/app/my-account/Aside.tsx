@@ -35,10 +35,11 @@ export default function Aside({
   const router = useRouter();
 
   const handleTabChange = (tab: string) => {
+    setIsSlided(true);
     if (tab === "Logout") {
       deleteCookie("authToken");
       router.push("/auth");
-
+      localStorage.setItem("nav", "Dashboard");
       return;
     }
     localStorage.setItem("nav", tab);
@@ -76,7 +77,7 @@ export default function Aside({
   return (
     <>
       <aside
-        className={`h-screen border-r flex flex-col items-center justify-start fixed top-0 left-0 w-[70%] sm:w-[40%] lg:w-[20%] md:relative max-w-[380px] transition-all ease-in-out duration-300 bg-[url('https://zainbia.com/wp-content/uploads/2024/03/zainbia-background-image.webp')] shadow-xl md:shadow-none ${
+        className={`h-screen border-r flex flex-col items-center justify-start fixed top-0 left-0 w-[70%] sm:w-[40%] lg:w-[20%] md:relative max-w-[380px] transition-all ease-in-out duration-300 bg-[url('https://zainbia.com/wp-content/uploads/2024/03/zainbia-background-image.webp')] z-50 shadow-xl md:shadow-none ${
           isSlided ? "-translate-x-full md:translate-x-0" : "translate-x-0"
         }`}
       >
@@ -94,7 +95,7 @@ export default function Aside({
               width={50}
               className="rounded-full"
             />
-            <div className="flex items-center gap-2 text-sm">
+            <div className="flex items-start gap-2 text-sm">
               <span>Hello</span>
               <span className="font-bold">
                 {data?.user?.firstName} {data?.user?.lastName}

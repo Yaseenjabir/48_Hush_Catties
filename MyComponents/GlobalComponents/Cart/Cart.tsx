@@ -80,6 +80,8 @@ export default function Cart() {
         price: Number(item.productId.price),
         quantity: item.quantity,
         images: item.productId.imageUrls,
+        color: item.color,
+        size: item.size,
       };
     });
 
@@ -114,7 +116,7 @@ export default function Cart() {
         </span>
       </div>
       <Drawer backdrop={backdrop} isOpen={isOpen} onOpenChange={onOpenChange}>
-        <DrawerContent>
+        <DrawerContent className="z-[1001]">
           <div className="w-full">
             <div className="py-3 border-b border-t px-5">
               <h1 className="font-extrabold text-red-700">

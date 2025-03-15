@@ -24,6 +24,8 @@ export default function Page() {
   const theme = useTheme(); // Get the current theme from MUI
   const isDarkMode = theme.palette.mode === "dark"; // Check if dark mode is active
 
+  console.log(data);
+
   React.useEffect(() => {
     const fetchData = async () => {
       if (data !== undefined) {
@@ -127,8 +129,8 @@ export default function Page() {
             </div>
             <div>
               <p className={isDarkMode ? "text-gray-300" : "text-gray-600"}>
-                <span className="font-medium">Total Amount:</span> $
-                {data?.amountTotal}
+                <span className="font-medium">Total Amount:</span> €
+                {data?.amountTotal / 100}
               </p>
               <p className={isDarkMode ? "text-gray-300" : "text-gray-600"}>
                 <span className="font-medium">Customer:</span>{" "}
@@ -220,6 +222,16 @@ export default function Page() {
                     >
                       <span className="font-bold">Quantity :</span>{" "}
                       {product.quantity}
+                    </p>
+                    <p
+                      className={isDarkMode ? "text-gray-300" : "text-gray-600"}
+                    >
+                      <span className="font-bold">Color :</span> {product.color}
+                    </p>
+                    <p
+                      className={isDarkMode ? "text-gray-300" : "text-gray-600"}
+                    >
+                      <span className="font-bold">Size :</span> {product.size}
                     </p>
                   </div>
                 </div>

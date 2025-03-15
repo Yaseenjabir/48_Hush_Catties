@@ -81,8 +81,8 @@ export interface Product {
   description: string;
   price: string;
   category: string;
-  size: string;
-  color: string;
+  color: [string];
+  size: [string];
   imageUrls: string[];
   stock: boolean;
   reviews: Review[];

@@ -14,6 +14,7 @@ import { Pagination, Autoplay } from "swiper/modules";
 import Image from "next/image";
 import { IoIosStar } from "react-icons/io";
 import { Product } from "@/constants/constants";
+import Link from "next/link";
 
 export default function SameCategorySlider({ data }: { data: Product[] }) {
   return (
@@ -51,7 +52,9 @@ export default function SameCategorySlider({ data }: { data: Product[] }) {
                 />
               </div>
               <div className="p-5 text-center">
-                <h1 className="text-gray-700">{item.name}</h1>
+                <Link href={`/shop/${item._id}`} className="text-gray-700">
+                  {item.name}
+                </Link>
                 <span className="text-red-700 text-sm">{item.price}€</span>
                 <div className="w-full flex flex-col md:flex-row items-center justify-center gap-1 mt-3">
                   <div className="w-full flex items-center justify-center md:w-min">

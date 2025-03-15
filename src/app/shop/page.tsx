@@ -20,7 +20,7 @@ import {
   FaExpandArrowsAlt,
   FaRegHeart,
   FaHeart,
-} from "react-icons/fa"; // Import FaHeart for filled heart
+} from "react-icons/fa";
 import Filter from "./Filter";
 import Link from "next/link";
 import BreadCrumb from "../../../MyComponents/GlobalComponents/BreadCrumb";
@@ -38,6 +38,15 @@ import { RxCross2 } from "react-icons/rx";
 import { useRouter } from "next/navigation";
 import { apiClient } from "../../../client/axiosClient";
 import { toast } from "sonner";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
 
 export default function Page() {
   const [showFilter, setShowFilter] = useState(false);
@@ -48,8 +57,10 @@ export default function Page() {
   const { items, insertItems, removeItem, globalData } = useStore();
   const [showNoDataMessage, setShowNoDataMessage] = useState(false);
   const [cartSpinnerIndex, setCartSpinnerIndex] = useState<null | string>(null);
-  const [wishlistItems, setWishlistItems] = useState<string[]>([]); // State to track wishlist items
-  const [wishlistLoading, setWishlistLoading] = useState(false); // State to handle wishlist loading
+  const [wishlistItems, setWishlistItems] = useState<string[]>([]);
+  const [wishlistLoading, setWishlistLoading] = useState(false);
+  const [selectedColor, setSelectedColor] = useState<string>("");
+  const [selectedSize, setSelectedSize] = useState<string>("");
 
   const currentData: Product[] =
     data.length > 0
@@ -60,7 +71,7 @@ export default function Page() {
     if (!loading && currentData.length === 0) {
       const timer = setTimeout(() => {
         setShowNoDataMessage(true);
-      }, 500); // Delay of 500ms
+      }, 500);
       return () => clearTimeout(timer);
     }
   }, [loading, currentData.length]);
@@ -71,11 +82,10 @@ export default function Page() {
     setLoading(false);
   }, [globalData]);
 
-  // Fetch user's wishlist on component mount
   useEffect(() => {
     const fetchWishlist = async () => {
       const authToken = getCookie("authToken");
-      if (!authToken) return; // Skip if user is not logged in
+      if (!authToken) return;
 
       try {
         const res = await apiClient.get(GET_WISHLIST, {
@@ -105,17 +115,25 @@ export default function Page() {
 
   const router = useRouter();
 
-  const handleAddToCart = async (productId: string) => {
+  const handleAddToCart = async (
+    productId: string,
+    color: string,
+    size: string
+  ) => {
     const authToken = getCookie("authToken");
     if (!authToken) {
       router.push("/auth?flag=addtocart");
+      return;
+    }
+    if (!color || !size) {
+      toast.warning("Select color and size");
       return;
     }
     setCartSpinnerIndex(productId);
     try {
       const res = await apiClient.post(
         ADD_ITEM_TO_CART,
-        { productId, quantity: 1 },
+        { productId, quantity: 1, color, size },
         {
           headers: {
             Authorization: authToken,
@@ -155,7 +173,6 @@ export default function Page() {
     }
   };
 
-  // Toggle wishlist item
   const toggleWishlist = async (productId: string) => {
     const authToken = getCookie("authToken");
     if (!authToken) {
@@ -175,11 +192,10 @@ export default function Page() {
         }
       );
 
-      // Update wishlist state based on the response
       if (res.data.message === "Item added to wishlist") {
-        setWishlistItems((prev) => [...prev, productId]); // Add product to wishlist
+        setWishlistItems((prev) => [...prev, productId]);
       } else if (res.data.message === "Item removed from wishlist") {
-        setWishlistItems((prev) => prev.filter((id) => id !== productId)); // Remove product from wishlist
+        setWishlistItems((prev) => prev.filter((id) => id !== productId));
       }
 
       toast.success(res.data.message);
@@ -243,7 +259,7 @@ export default function Page() {
                     const isInCart = items.some(
                       (cartItem) => cartItem.productId._id === item._id
                     );
-                    const isInWishlist = wishlistItems.includes(item._id); // Check if product is in wishlist
+                    const isInWishlist = wishlistItems.includes(item._id);
 
                     return (
                       <div key={index} className="flex w-full">
@@ -292,26 +308,118 @@ export default function Page() {
                             {cartSpinnerIndex === item._id ? (
                               <Spinner variant="spinner" />
                             ) : item.stock ? (
-                              <button
-                                onClick={() => {
-                                  isInCart
-                                    ? removeItemFromCart(item._id)
-                                    : handleAddToCart(item._id);
-                                }}
-                                className={`py-2 px-4 uppercase text-sm text-nowrap ${
-                                  isInCart
-                                    ? "bg-gray-500 text-white"
-                                    : "bg-red-700 text-white"
-                                }`}
-                              >
-                                {isInCart ? "Remove from Cart" : "Add to Cart"}
-                              </button>
+                              <Dialog>
+                                <DialogTrigger asChild>
+                                  {isInCart ? (
+                                    <Button
+                                      onClick={() =>
+                                        removeItemFromCart(item._id)
+                                      }
+                                      className={
+                                        "py-2 px-4 uppercase text-sm text-nowrap bg-gray-400 text-white"
+                                      }
+                                    >
+                                      Remove from Cart
+                                    </Button>
+                                  ) : (
+                                    <Button
+                                      className={
+                                        "py-2 px-4 uppercase text-sm text-nowrap bg-red-700 text-white"
+                                      }
+                                    >
+                                      Add to Cart
+                                    </Button>
+                                  )}
+                                </DialogTrigger>
+                                <DialogContent className="sm:max-w-[425px]">
+                                  <DialogHeader>
+                                    <DialogTitle className="text-lg font-semibold text-center">
+                                      Select Options
+                                    </DialogTitle>
+                                  </DialogHeader>
+                                  <div className="space-y-6">
+                                    {/* Color Selection */}
+                                    <div>
+                                      <Label className="block text-sm font-medium mb-2">
+                                        Available Color
+                                      </Label>
+                                      <div className="flex flex-wrap gap-2">
+                                        {item.color.map((color) => (
+                                          <Button
+                                            key={color}
+                                            variant={
+                                              selectedColor === color
+                                                ? "default"
+                                                : "outline"
+                                            }
+                                            className={`rounded-full px-4 py-2 text-sm ${
+                                              selectedColor === color
+                                                ? "bg-blue-600 text-white hover:bg-blue-700"
+                                                : "bg-white text-gray-700 hover:bg-gray-100"
+                                            }`}
+                                            onClick={() =>
+                                              setSelectedColor(color)
+                                            }
+                                          >
+                                            {color}
+                                          </Button>
+                                        ))}
+                                      </div>
+                                    </div>
+
+                                    {/* Size Selection */}
+                                    <div>
+                                      <Label className="block text-sm font-medium mb-2">
+                                        Available Size
+                                      </Label>
+                                      <div className="flex flex-wrap gap-2">
+                                        {item.size.map((size) => (
+                                          <Button
+                                            key={size}
+                                            variant={
+                                              selectedSize === size
+                                                ? "default"
+                                                : "outline"
+                                            }
+                                            className={`rounded-full px-4 py-2 text-sm ${
+                                              selectedSize === size
+                                                ? "bg-blue-600 text-white hover:bg-blue-700"
+                                                : "bg-white text-gray-700 hover:bg-gray-100"
+                                            }`}
+                                            onClick={() =>
+                                              setSelectedSize(size)
+                                            }
+                                          >
+                                            {size}
+                                          </Button>
+                                        ))}
+                                      </div>
+                                    </div>
+                                  </div>
+
+                                  {/* Confirm Button */}
+                                  <div className="mt-6 flex justify-end">
+                                    <Button
+                                      onClick={() =>
+                                        handleAddToCart(
+                                          item._id,
+                                          selectedColor,
+                                          selectedSize
+                                        )
+                                      }
+                                      className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg"
+                                    >
+                                      Confirm
+                                    </Button>
+                                  </div>
+                                </DialogContent>
+                              </Dialog>
                             ) : (
-                              <button
+                              <Button
                                 className={`py-2 px-4 uppercase cursor-auto text-white text-sm text-nowrap bg-gray-400`}
                               >
                                 Out of stock
-                              </button>
+                              </Button>
                             )}
 
                             <div className="text-xl flex gap-5 text-gray-700">
@@ -334,9 +442,9 @@ export default function Page() {
                                       disabled={wishlistLoading}
                                     >
                                       {isInWishlist ? (
-                                        <FaHeart className="cursor-pointer text-red-500" /> // Filled heart
+                                        <FaHeart className="cursor-pointer text-red-500" />
                                       ) : (
-                                        <FaRegHeart className="cursor-pointer" /> // Empty heart
+                                        <FaRegHeart className="cursor-pointer" />
                                       )}
                                     </button>
                                   </TooltipTrigger>

@@ -10,6 +10,7 @@ import {
   sizes,
 } from "@/constants/constants";
 import { FaCheck } from "react-icons/fa";
+import { useSearchParams } from "next/navigation";
 
 interface DatInt {
   setShowFilter: (item: boolean) => void;
@@ -49,6 +50,9 @@ const Filter: React.FC<DatInt> = ({
     },
   });
 
+  const searchParams = useSearchParams();
+
+  const search = searchParams.get("category");
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedColors, setSelectedColors] = useState<string[]>([]);
   const [minMax, setMinMax] = useState<number | number[]>([10, 200]);
@@ -92,10 +96,21 @@ const Filter: React.FC<DatInt> = ({
     return Number(product.price) >= minVal && Number(product.price) <= maxVal;
   };
 
+  useEffect(() => {
+    if (search) {
+      setSelectedCategories([search]);
+    }
+  }, [search]);
+
   const handleSearchFilter = () => {
     const filtered = filterProducts();
     setData(filtered);
+    setShowFilter(false);
   };
+  useEffect(() => {
+    // Apply filtering logic whenever selectedCategories changes
+    handleSearchFilter();
+  }, [selectedCategories, handleSearchFilter]); // Add selectedCategories as a dependency
 
   const handleClearFilter = () => {
     setSelectedCategories([]);
@@ -103,13 +118,14 @@ const Filter: React.FC<DatInt> = ({
     setMinMax([10, 200]);
     setSelectedSizes([]);
     setData(originalData);
+    setShowFilter(false);
   };
 
   return (
     <div
       onClick={() => setShowFilter(false)}
       style={{ transitionDuration: "2000ms" }}
-      className={`w-full h-screen fixed top-0 left-0 z-50 ${
+      className={`w-full h-screen fixed top-0 left-0 z-[1001] ${
         showFilter ? "visible backdrop-blur-sm" : "invisible backdrop-blur-none"
       } transition-all ease-in-out`}
     >

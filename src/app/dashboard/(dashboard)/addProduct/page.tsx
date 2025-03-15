@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
+  // FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -58,6 +59,7 @@ const formSchema = z.object({
   size: z.array(z.enum(sizes)).min(1),
   color: z.array(z.enum(colors)).min(1),
   stock: z.boolean(),
+  // tiktokUrl: z.string().optional(),
   images: z
     .array(
       z.instanceof(File).refine((file) => file.type.startsWith("image/"), {
@@ -114,6 +116,10 @@ export default function Page() {
     formData.append("price", values.price);
 
     formData.append("stock", String(values.stock));
+
+    // if (values.tiktokUrl) {
+    //   formData.append("tiktokUrl", values.tiktokUrl);
+    // }
 
     values.images.forEach((image) => {
       formData.append("images", image);
@@ -315,6 +321,20 @@ export default function Page() {
               </FormItem>
             )}
           />
+          {/* <FormField
+            control={form.control}
+            name="tiktokUrl"
+            render={() => (
+              <FormItem>
+                <FormLabel>Tiktok Url (Optional)</FormLabel>
+                <FormControl>
+                  <Input type="text" placeholder="Enter url" />
+                </FormControl>
+                <FormDescription>A url to the tiktok video</FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          /> */}
           {loading ? (
             <Button className="w-full flex items-center justify-center gap-2 bg-red-600 hover:bg-red-700">
               Submitting <FaArrowRotateRight className="animate-spin" />

@@ -1,6 +1,7 @@
 "use client";
 import { Input } from "@/components/ui/input";
-import { shopName } from "@/constants/constants";
+import { categories, shopName } from "@/constants/constants";
+import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React from "react";
 import { toast } from "sonner";
@@ -12,22 +13,28 @@ export default function Footer() {
     {
       id: 1,
       father: "Quick Links",
-      children: ["Home", "Shop", "About", "Contact", "Account"],
+      children: [
+        { name: "Home", redirectTo: "/" },
+        { name: "Shop", redirectTo: "/shop" },
+        { name: "About", redirectTo: "/" },
+        { name: "Contact", redirectTo: "/contact" },
+        { name: "Account", redirectTo: "/my-account" },
+      ],
     },
     {
       id: 2,
       father: "Categories",
-      children: ["Abayas", "Tops", "Coats", "Jackets", "Purse"],
+      children: categories,
     },
     {
       id: 3,
       father: "Polices",
       children: [
-        "Privacy Policy",
-        "Return Policy",
-        "Shipping Policy",
-        "Terms of Service",
-        "Exchange Policy",
+        { name: "Privacy Policy", redirectTo: "/" },
+        { name: "Return Policy", redirectTo: "/" },
+        { name: "Shipping Policy", redirectTo: "/" },
+        { name: "Terms of Service", redirectTo: "/" },
+        { name: "Exchange Policy", redirectTo: "/" },
       ],
     },
   ];
@@ -37,16 +44,32 @@ export default function Footer() {
     !pathName.startsWith("/dashboard") && (
       <footer className="py-10 px-5 bg-[#232323] text-white">
         <section className="grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-4 max-w-[1100px] mx-auto">
-          {data.map((item: any, index: number) => {
+          {data.map((father: any, index: number) => {
             return (
               <div key={index} className="w-full">
-                <h1 className="font-semibold">{item.father}</h1>
+                <h1 className="font-semibold">{father.father}</h1>
                 <ul className="mt-5 px-3 text-sm text-gray-300 flex flex-col gap-5 list-disc">
-                  {item.children.map((item: string, index: number) => (
-                    <li key={index} className="cursor-pointer hover:underline">
-                      {item}
-                    </li>
-                  ))}
+                  {father.children.map((item, index: number) => {
+                    if (father.father === "Categories") {
+                      return (
+                        <li
+                          key={index}
+                          className="cursor-pointer hover:underline"
+                        >
+                          <Link href={`/shop?categories=${item}`}>{item}</Link>
+                        </li>
+                      );
+                    } else {
+                      return (
+                        <li
+                          key={index}
+                          className="cursor-pointer hover:underline"
+                        >
+                          <Link href={item.redirectTo}>{item.name}</Link>
+                        </li>
+                      );
+                    }
+                  })}
                 </ul>
               </div>
             );

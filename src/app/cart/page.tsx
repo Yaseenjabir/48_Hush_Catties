@@ -30,6 +30,7 @@ export default function Page() {
   // Fetch user profile data
   useEffect(() => {
     const fetchData = async () => {
+      if (!token) return;
       try {
         setLoader(true);
         const res = await apiClient.get(GET_USER_PROFILE, {
@@ -111,6 +112,8 @@ export default function Page() {
         price: Number(item.productId.price),
         quantity: item.quantity,
         images: item.productId.imageUrls,
+        color: item.color,
+        size: item.size,
       };
     });
 

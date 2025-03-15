@@ -7,10 +7,11 @@ import { IoIosSearch } from "react-icons/io";
 import { AiOutlineUser } from "react-icons/ai";
 import { RxCross1 } from "react-icons/rx";
 import { FaHeart } from "react-icons/fa";
-import { Input } from "@/components/ui/input";
 import Link from "next/link";
 import Cart from "../GlobalComponents/Cart/Cart";
 import { usePathname, useRouter } from "next/navigation";
+import { getCookie } from "@/constants/constants";
+import Search from "./Search";
 export default function Header() {
   const [isSlided, setIsSlided] = useState(true);
 
@@ -19,13 +20,22 @@ export default function Header() {
 
   const router = useRouter();
 
+  const handleRedirection = () => {
+    const token = getCookie("authToken");
+    if (!token) {
+      router.push("/auth?my-account");
+      return;
+    }
+    router.push("/my-account");
+    localStorage.setItem("nav", "Wishlist");
+  };
   const menus = [
     { item: "Home", redirectTo: "/" },
     { item: "Shop", redirectTo: "/shop" },
-    { item: "Cart", redirectTo: "cart" },
-    { item: "Contact", redirectTo: "" },
-    { item: "Arrivals", redirectTo: "" },
-    { item: "Featured", redirectTo: "" },
+    { item: "Cart", redirectTo: "/cart" },
+    { item: "Contact", redirectTo: "/contact" },
+    { item: "About", redirectTo: "/" },
+    { item: "Find", redirectTo: "/shop" },
   ];
 
   return (
@@ -33,7 +43,7 @@ export default function Header() {
       {!pathName.startsWith("/my-account") &&
         !pathName.startsWith("/dashboard") && (
           <>
-            <div className="w-full px-5 py-2 flex items-center justify-center bg-red-700 text-white">
+            <div className="w-full px-5 z-[1000] sticky top-0 py-2 flex items-center justify-center bg-red-700 text-white">
               <ReactTyped
                 strings={[
                   "🔥 Where style meets confidence.",
@@ -45,7 +55,7 @@ export default function Header() {
                 backSpeed={50}
               />
             </div>
-            <div className="w-full bg-black">
+            <div className="w-full z-[999] bg-black sticky top-[40px]">
               <header className="py-3 px-5 max-w-[1200px] mx-auto text-white flex items-center justify-between">
                 <RxHamburgerMenu
                   className="text-2xl cursor-pointer md:hidden"
@@ -56,10 +66,7 @@ export default function Header() {
                     <AiOutlineUser className="cursor-pointer hidden md:block text-2xl" />
                   </Link>
                   <FaHeart
-                    onClick={() => {
-                      router.push("/my-account");
-                      localStorage.setItem("nav", "Wishlist");
-                    }}
+                    onClick={handleRedirection}
                     className="cursor-pointer hidden md:block text-2xl text-red-500"
                   />
                 </div>
@@ -80,11 +87,12 @@ export default function Header() {
                 </div>
                 <div className="w-16">
                   <Image
-                    src={"/logo.png"}
+                    src={"/mainLogo.jpg"}
                     width={400}
                     height={400}
                     layout="responsive"
                     alt="logo"
+                    className="rounded-full"
                   />
                 </div>
                 <div className="items-center justify-center hidden md:flex">
@@ -110,136 +118,10 @@ export default function Header() {
                   />
                   <Cart />
                 </div>
-                <div
-                  className={`bg-black text-white mx-auto ${
-                    isSearchBarActive ? "max-h-screen" : "max-h-0 p-0"
-                  } absolute top-[128px] overflow-hidden left-0 w-full z-10 transition-all ease-in-out duration-700`}
-                >
-                  <div className="w-full max-w-[1200px] mx-auto">
-                    <div className="w-full p-5">
-                      <div className="flex items-center gap-2">
-                        <IoIosSearch className="text-2xl cursor-pointer" />
-                        <Input placeholder="Search here" />
-                        <RxCross1
-                          onClick={() => setIsSearchBarActive(false)}
-                          className="cursor-pointer text-2xl"
-                        />
-                      </div>
-                    </div>
-                    {/* <div className="w-full flex flex-col items-center justify-center py-10 px-5 bg-black text-white h-[451px]">
-                <span>
-                  No results could be found. Please try again with a different
-                  query.
-                </span>
-              </div> */}
-                    <div className="bg-black flex flex-col lg:flex-row p-5 h-[451px] lg:gap-10">
-                      <div className="w-full lg:w-[20%]">
-                        <h1 className="uppercase font-thin border-b border-b-gray-500 py-2">
-                          Suggestions
-                        </h1>
-                        <div className="w-full py-5 flex gap-3 flex-wrap">
-                          <span className="w-min text-nowrap cursor-pointer hover:underline">
-                            Dress
-                          </span>
-                          <span className="w-min text-nowrap cursor-pointer hover:underline">
-                            clothes
-                          </span>
-                          <span className="w-min text-nowrap cursor-pointer hover:underline">
-                            Lawn
-                          </span>
-                          <span className="w-min text-nowrap cursor-pointer hover:underline">
-                            Abayas
-                          </span>
-                          <span className="w-min text-nowrap cursor-pointer hover:underline">
-                            collections
-                          </span>
-                          <span className="w-min text-nowrap cursor-pointer hover:underline">
-                            New Dresses
-                          </span>
-                          <span className="w-min text-nowrap cursor-pointer hover:underline">
-                            low prices
-                          </span>
-                          <span className="w-min text-nowrap cursor-pointer hover:underline">
-                            2025 best dress
-                          </span>
-                          <span className="w-min text-nowrap cursor-pointer hover:underline">
-                            velvet
-                          </span>
-                        </div>
-                      </div>
-                      <div className="w-full lg:w-[80%]">
-                        <h1 className="uppercase font-thin border-b border-b-gray-500 py-2">
-                          Products
-                        </h1>
-                        <div className="w-full py-5 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10 overflow-auto max-h-[220px]">
-                          <div className="flex items-center w-full justify-start gap-2 text-sm">
-                            <div>
-                              <Image
-                                src={
-                                  "https://heerpret.com/cdn/shop/files/Eminence.webp?v=1739190116&width=100"
-                                }
-                                width={100}
-                                height={100}
-                                alt="fashion"
-                                layout="responsive"
-                              />
-                            </div>
-                            <div>
-                              <h1 className="font-medium">
-                                Eminence 2Pc -Pima Lawn
-                              </h1>
-                              <span className="text-red-500 font-thin">
-                                Rs.2,995.00
-                              </span>
-                            </div>
-                          </div>
-                          <div className="flex items-center w-full justify-start gap-2 text-sm">
-                            <div>
-                              <Image
-                                src={
-                                  "https://heerpret.com/cdn/shop/files/Eminence.webp?v=1739190116&width=100"
-                                }
-                                width={100}
-                                height={100}
-                                alt="fashion"
-                                layout="responsive"
-                              />
-                            </div>
-                            <div>
-                              <h1 className="font-medium">
-                                Eminence 2Pc -Pima Lawn
-                              </h1>
-                              <span className="text-red-500 font-thin">
-                                Rs.2,995.00
-                              </span>
-                            </div>
-                          </div>
-                          <div className="flex items-center w-full justify-start gap-2 text-sm">
-                            <div>
-                              <Image
-                                src={
-                                  "https://heerpret.com/cdn/shop/files/Eminence.webp?v=1739190116&width=100"
-                                }
-                                width={100}
-                                height={100}
-                                alt="fashion"
-                                layout="responsive"
-                              />
-                            </div>
-                            <div>
-                              <h1 className="font-medium">
-                                Eminence 2Pc -Pima Lawn
-                              </h1>
-                              <span className="text-red-500 font-thin">
-                                Rs.2,995.00
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                <Search
+                  isSearchBarActive={isSearchBarActive}
+                  setIsSearchBarActive={setIsSearchBarActive}
+                />
               </header>
             </div>
 
