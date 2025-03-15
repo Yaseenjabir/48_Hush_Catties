@@ -108,9 +108,10 @@ const Filter: React.FC<DatInt> = ({
     setShowFilter(false);
   };
   useEffect(() => {
-    // Apply filtering logic whenever selectedCategories changes
-    handleSearchFilter();
-  }, [selectedCategories, handleSearchFilter]); // Add selectedCategories as a dependency
+    const filtered = filterProducts();
+    setData(filtered);
+    setShowFilter(false);
+  }, [selectedCategories]);
 
   const handleClearFilter = () => {
     setSelectedCategories([]);
