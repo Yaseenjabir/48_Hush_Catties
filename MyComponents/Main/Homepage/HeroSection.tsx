@@ -9,26 +9,28 @@ function HeroSection() {
   ];
 
   return (
-    <Zoom
-      scale={1.4}
-      cssClass="myClass"
-      arrows={false}
-      pauseOnHover={false}
-      duration={2000}
-    >
-      {images.map((each, index) => (
-        <div
-          key={index}
-          className="h-[100vh]"
-          style={{
-            backgroundImage: `url('${each}')`,
-            backgroundPosition: "bottom",
-            backgroundSize: "cover",
-            backgroundRepeat: "no-repeat",
-          }}
-        ></div>
-      ))}
-    </Zoom>
+    <div className="w-full mx-auto">
+      <Zoom
+        scale={1.4}
+        cssClass="myClass"
+        arrows={false}
+        pauseOnHover={false}
+        duration={2000}
+      >
+        {images.map((each, index) => (
+          <div
+            key={index}
+            className="h-[100vh]"
+            style={{
+              backgroundImage: `url('${each}')`,
+              backgroundPosition: "bottom",
+              backgroundSize: "cover",
+              backgroundRepeat: "no-repeat",
+            }}
+          ></div>
+        ))}
+      </Zoom>
+    </div>
   );
 }
 

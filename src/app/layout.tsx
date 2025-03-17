@@ -2,13 +2,13 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono, Nunito_Sans } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
-import Header from "../../MyComponents/Header/Header";
 import Footer from "../../MyComponents/Footer/Footer";
 import { Providers } from "./providers";
 import LinearProgress from "@mui/material/LinearProgress";
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v15-appRouter";
 import React from "react";
 import FetchGlobalData from "../../MyComponents/GlobalComponents/FetchGlobalData";
+import Header2 from "../../MyComponents/Header/Header2";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -45,7 +45,7 @@ export default function RootLayout({
         <AppRouterCacheProvider options={{ enableCssLayer: false }}>
           <React.Suspense fallback={<LinearProgress />}>
             <Providers>
-              <Header />
+              <Header2 />
               {children}
               <Footer />
               <Toaster />

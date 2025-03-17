@@ -4,9 +4,9 @@ import { DashboardLayout } from "@toolpad/core/DashboardLayout";
 import { PageContainer } from "@toolpad/core/PageContainer";
 import { NextAppProvider } from "@toolpad/core/nextjs";
 import { Navigation } from "@toolpad/core";
-import { LayoutDashboardIcon } from "lucide-react";
 import { TimelineOutlined } from "@mui/icons-material";
 import { IoIosAdd } from "react-icons/io";
+import { LayoutDashboardIcon } from "lucide-react";
 
 const NAVIGATION: Navigation = [
   {
@@ -26,6 +26,11 @@ const NAVIGATION: Navigation = [
   {
     segment: "dashboard/addProduct",
     title: "Add Product",
+    icon: <IoIosAdd className="text-2xl" />,
+  },
+  {
+    segment: "dashboard/blog",
+    title: "Blog",
     icon: <IoIosAdd className="text-2xl" />,
   },
 ];

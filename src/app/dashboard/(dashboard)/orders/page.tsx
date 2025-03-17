@@ -133,9 +133,7 @@ export default function OrdersPage() {
                 >
                   Quantity: {order.product.quantity}
                 </p>
-                <p className={`${isDarkMode ? "text-white" : "text-gray-600"}`}>
-                  Ordered by: yaseen jabir
-                </p>
+
                 <button
                   onClick={() => router.push(`/dashboard/orders/${order._id}`)}
                   className="bg-red-700 w-full py-2 font-semibold text-white mt-4 text-sm hover:bg-red-800"

@@ -111,7 +111,6 @@ const Filter: React.FC<DatInt> = ({
     const filtered = filterProducts();
     setData(filtered);
     setShowFilter(false);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedCategories]);
 
   const handleClearFilter = () => {

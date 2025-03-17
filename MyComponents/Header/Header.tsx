@@ -3,7 +3,7 @@ import Image from "next/image";
 import React, { useState } from "react";
 import { RxHamburgerMenu } from "react-icons/rx";
 import { ReactTyped } from "react-typed";
-import { IoIosSearch } from "react-icons/io";
+import { IoIosSearch, IoMdHeartEmpty } from "react-icons/io";
 import { AiOutlineUser } from "react-icons/ai";
 import { RxCross1 } from "react-icons/rx";
 import { FaHeart } from "react-icons/fa";
@@ -11,12 +11,13 @@ import Link from "next/link";
 import Cart from "../GlobalComponents/Cart/Cart";
 import { usePathname, useRouter } from "next/navigation";
 import { getCookie } from "@/constants/constants";
-import Search from "./Search";
+// import Search from "./Search";
 export default function Header() {
   const [isSlided, setIsSlided] = useState(true);
 
   const [isSearchBarActive, setIsSearchBarActive] = useState(false);
   const pathName = usePathname();
+  console.log(isSearchBarActive);
 
   const router = useRouter();
 
@@ -65,7 +66,7 @@ export default function Header() {
                   <Link href={"/my-account"}>
                     <AiOutlineUser className="cursor-pointer hidden md:block text-2xl" />
                   </Link>
-                  <FaHeart
+                  <IoMdHeartEmpty
                     onClick={handleRedirection}
                     className="cursor-pointer hidden md:block text-2xl text-red-500"
                   />
@@ -118,10 +119,6 @@ export default function Header() {
                   />
                   <Cart />
                 </div>
-                <Search
-                  isSearchBarActive={isSearchBarActive}
-                  setIsSearchBarActive={setIsSearchBarActive}
-                />
               </header>
             </div>
 
