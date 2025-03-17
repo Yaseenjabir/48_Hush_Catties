@@ -57,6 +57,7 @@ export default function Login({ setShowLogin }: { setShowLogin: any }) {
       });
 
       if (res.status === 200) {
+        setCookie("authToken", res.data.token, 1);
         if (flag === "addtocart") {
           router.push("/shop");
         } else if (flag === "cart") {
@@ -67,8 +68,6 @@ export default function Login({ setShowLogin }: { setShowLogin: any }) {
         } else {
           router.push("/my-account");
         }
-
-        setCookie("authToken", res.data.token, 1);
       }
     } catch (error: unknown) {
       if (error instanceof AxiosError) {
