@@ -41,7 +41,8 @@ export default function Footer() {
 
   return (
     !pathName.startsWith("/my-account") &&
-    !pathName.startsWith("/dashboard") && (
+    !pathName.startsWith("/dashboard") &&
+    !pathName.startsWith("/studio") && (
       <footer className="py-10 px-5 bg-[#232323] text-white">
         <section className="grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-4 max-w-[1100px] mx-auto">
           {data.map((father: any, index: number) => {

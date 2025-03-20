@@ -32,8 +32,6 @@ export default function Header2() {
 
   const { items, globalData } = useStore();
 
-  console.log(items);
-
   useEffect(() => {
     const token = getCookie("authToken");
     if (token) {
@@ -85,13 +83,15 @@ export default function Header2() {
     { item: "Cart", redirectTo: "/cart" },
     { item: "Contact", redirectTo: "/contact" },
     { item: "About", redirectTo: "/about" },
+    { item: "Blog", redirectTo: "/blog" },
   ];
 
   return (
     !pathName.startsWith("/my-account") &&
-    !pathName.startsWith("/dashboard") && (
-      <header className="w-full flex flex-col xl:pb-0 xl:px-0 gap-3.5 bg-red-700 text-white border-b md:border-none sticky top-0 z-50">
-        <div className="w-full flex flex-col gap-7 md:flex-row py-8 px-5 md:py-5 items-center justify-center max-w-[1200px] mx-auto">
+    !pathName.startsWith("/dashboard") &&
+    !pathName.startsWith("/studio") && (
+      <header className="w-full flex flex-col xl:pb-0 xl:px-0 bg-red-700 text-white border-b md:border-none sticky top-0 z-50">
+        <div className="w-full flex flex-col gap-7 md:flex-row py-4 px-5 md:py-5 items-center justify-center max-w-[1200px] mx-auto">
           <div className="items-center justify-center hidden lg:flex">
             <TooltipProvider>
               <Tooltip>
@@ -163,7 +163,7 @@ export default function Header2() {
             </div>
           </div>
         </div>
-        <div className="w-full py-2 px-5 bg-gray-700 hidden md:block lg:p-0">
+        <div className="w-full py-2 px-5 bg-[#232323] hidden md:block lg:p-0">
           <RxHamburgerMenu className="text-white text-2xl cursor-pointer lg:hidden " />
           <ul className="w-full py-1 items-center gap-2 justify-start px-2 text-white hidden lg:flex max-w-[1200px] mx-auto">
             {menus.map((item, index) => (

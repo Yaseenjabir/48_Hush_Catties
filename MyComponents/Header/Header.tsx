@@ -3,7 +3,7 @@ import Image from "next/image";
 import React, { useState } from "react";
 import { RxHamburgerMenu } from "react-icons/rx";
 import { ReactTyped } from "react-typed";
-import { IoIosSearch, IoMdHeartEmpty } from "react-icons/io";
+import { IoMdHeartEmpty } from "react-icons/io";
 import { AiOutlineUser } from "react-icons/ai";
 import { RxCross1 } from "react-icons/rx";
 import { FaHeart } from "react-icons/fa";
@@ -15,9 +15,7 @@ import { getCookie } from "@/constants/constants";
 export default function Header() {
   const [isSlided, setIsSlided] = useState(true);
 
-  const [isSearchBarActive, setIsSearchBarActive] = useState(false);
   const pathName = usePathname();
-  console.log(isSearchBarActive);
 
   const router = useRouter();
 
@@ -111,12 +109,6 @@ export default function Header() {
                   </ul>
                 </div>
                 <div className="flex items-center justify-center text-2xl gap-2">
-                  <IoIosSearch
-                    onClick={() =>
-                      setIsSearchBarActive((prev: boolean) => !prev)
-                    }
-                    className="cursor-pointer"
-                  />
                   <Cart />
                 </div>
               </header>

@@ -1,6 +1,6 @@
 "use client";
 import { Input } from "@/components/ui/input";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -32,6 +32,7 @@ export default function Login({ setShowLogin }: { setShowLogin: any }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [backdrop, setBackdrop] = useState<BackdropType>("opaque");
   const [errMessage, setErrMessage] = useState("");
+  const [isAuthenticated, setIsAuthenticated] = useState("");
   const router = useRouter();
 
   const searchParams = useSearchParams();
@@ -46,6 +47,12 @@ export default function Login({ setShowLogin }: { setShowLogin: any }) {
     resolver: zodResolver(formSchema),
   });
 
+  useEffect(() => {
+    if (isAuthenticated) {
+      router.push(isAuthenticated);
+    }
+  }, [isAuthenticated, router]);
+
   // 2. Define a submit handler.
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
@@ -57,17 +64,19 @@ export default function Login({ setShowLogin }: { setShowLogin: any }) {
       });
 
       if (res.status === 200) {
+        let path: string;
         setCookie("authToken", res.data.token, 1);
         if (flag === "addtocart") {
-          router.push("/shop");
+          path = "/addtocart";
         } else if (flag === "cart") {
-          router.push("/cart");
+          path = "/cart";
         } else if (flag === "my-account") {
-          router.push("/my-account");
+          path = "/my-account";
           localStorage.setItem("nav", "Wishlist");
         } else {
-          router.push("/my-account");
+          path = "/my-account";
         }
+        setIsAuthenticated(path);
       }
     } catch (error: unknown) {
       if (error instanceof AxiosError) {

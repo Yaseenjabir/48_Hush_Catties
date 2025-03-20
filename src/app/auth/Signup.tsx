@@ -1,5 +1,5 @@
 import { Input } from "@/components/ui/input";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
@@ -28,11 +28,19 @@ const formSchema = z.object({
 
 export default function Signup({ setShowLogin }: { setShowLogin: any }) {
   const [loading, setLoading] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState("");
+
   const router = useRouter();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
   });
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      router.push(isAuthenticated);
+    }
+  }, [isAuthenticated, router]);
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
@@ -45,7 +53,7 @@ export default function Signup({ setShowLogin }: { setShowLogin: any }) {
 
       if (res.status === 200) {
         setCookie("authToken", res.data.token, 1);
-        router.push("/my-account");
+        setIsAuthenticated("/my-account");
         toast.success("Your account has been created successfully");
       }
     } catch (error: unknown) {

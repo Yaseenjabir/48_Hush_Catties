@@ -28,11 +28,6 @@ const NAVIGATION: Navigation = [
     title: "Add Product",
     icon: <IoIosAdd className="text-2xl" />,
   },
-  {
-    segment: "dashboard/blog",
-    title: "Blog",
-    icon: <IoIosAdd className="text-2xl" />,
-  },
 ];
 
 const BRANDING = {

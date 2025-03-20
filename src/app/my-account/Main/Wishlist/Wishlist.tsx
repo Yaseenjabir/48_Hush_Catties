@@ -119,8 +119,7 @@ const WishlistItem = ({ product }) => {
       toast.success(res.data.message);
 
       setTimeout(() => location.reload(), 1000);
-    } catch (error) {
-      console.error("Failed to toggle wishlist:", error);
+    } catch {
       toast.error("Something went wrong");
     }
   };

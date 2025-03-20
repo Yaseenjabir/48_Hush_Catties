@@ -28,10 +28,10 @@ export default function page({
     <div
       className={`bg-black text-white mx-auto z-50 ${
         valLength > 0 ? "max-h-screen" : "max-h-0 p-0"
-      } absolute top-[180px] md:top-[150px] lg:top-[155px] overflow-hidden left-0 w-full z-10 transition-all ease-in-out duration-700`}
+      } absolute top-[148px] md:top-[136px] lg:top-[145px] overflow-hidden left-0 w-full z-10 transition-all ease-in-out duration-700`}
     >
       <div className="w-full max-w-[1200px] mx-auto">
-        <div className="bg-black flex flex-col lg:flex-row p-5 h-[461px] md:h-[495px] lg:gap-10">
+        <div className="bg-black flex flex-col lg:flex-row p-5 h-[492px] md:h-[510px] lg:gap-10">
           <div className="w-full lg:w-[20%]">
             <h1 className="uppercase font-thin border-b border-b-gray-500 py-2">
               Suggestions

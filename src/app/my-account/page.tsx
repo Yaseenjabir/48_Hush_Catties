@@ -9,18 +9,29 @@ import ProfileDetails from "./Main/ProfileDetails";
 import Wishlist from "./Main/Wishlist/Wishlist";
 import { GET_USER_PROFILE, getCookie } from "@/constants/constants";
 import { apiClient } from "../../../client/axiosClient";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { Spinner } from "@heroui/react";
+import SingleOrder from "./Main/singleOrder";
 
 export default function Page() {
-  const [activeTab, setActiveTab] = useState("Dashboard");
-  const [isSlided, setIsSlided] = useState(true);
+  const router = useRouter();
+  const pathname = usePathname(); // Get the current pathname
+  const searchParams = useSearchParams(); // Get the query parameters
+  const tabParam = searchParams.get("tab"); // Get the "tab" parameter from the URL
 
+  const [activeTab, setActiveTab] = useState(tabParam || "Dashboard"); // Set activeTab based on the URL parameter
+  const [isSlided, setIsSlided] = useState(true);
   const [data, setData] = useState([]);
   const [loader, setLoader] = useState(true);
 
-  const router = useRouter();
+  // Update the URL when the active tab changes
+  useEffect(() => {
+    if (tabParam !== activeTab) {
+      router.push(`${pathname}?tab=${activeTab}`);
+    }
+  }, [activeTab, pathname, router, tabParam]);
 
+  // Fetch user profile data
   useEffect(() => {
     const fetchData = async () => {
       setLoader(true);
@@ -30,15 +41,18 @@ export default function Page() {
       });
       if (res.status === 200) {
         setData(res.data);
-        const nav = localStorage.getItem("nav");
-        if (nav !== null) {
-          setActiveTab(nav);
-        }
       }
       setLoader(false);
     };
     fetchData();
   }, []);
+
+  // Set the active tab based on the URL parameter when the component mounts
+  useEffect(() => {
+    if (tabParam) {
+      setActiveTab(tabParam);
+    }
+  }, [tabParam]);
 
   return loader ? (
     <div className="w-full h-screen flex items-center justify-center">
@@ -73,7 +87,6 @@ export default function Page() {
             alt="logo"
             className="rounded-full cursor-pointer"
           />
-          {/* <IoMdSunny className="text-2xl" /> */}
         </header>
 
         {activeTab === "Dashboard" ? (
@@ -82,6 +95,8 @@ export default function Page() {
           <Orders data={data} />
         ) : activeTab === "Account details" ? (
           <ProfileDetails data={data} />
+        ) : activeTab === "Single Order" ? (
+          <SingleOrder />
         ) : (
           <Wishlist data={data} />
         )}

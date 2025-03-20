@@ -1,67 +1,58 @@
-import Image from "next/image";
 import React from "react";
 import Heading from "./Heading";
+import { useRouter } from "next/navigation";
 
-export default function Orders({ data }) {
-  console.log("Data is : ", data);
-  const products = data?.orders?.flatMap((item) =>
-    item.products.map((product) => ({
-      product, // The product itself
-      createdAt: item.createdAt,
-      amountTotal: item.amountTotal,
-      status: item.status,
-    }))
-  );
+const Orders = ({ data }) => {
+  const router = useRouter();
 
   return (
-    <section className="w-full py-10 px-5 flex flex-col gap-10">
+    <div className="p-6 min-h-screen">
       <Heading text="Orders" />
-      {products.length === 0 ? (
-        <p>No orders available</p>
-      ) : (
-        products.map((item, index) => {
-          return (
-            <div
-              key={index}
-              style={{ boxShadow: "-3px 7px 15px 0px rgba(0, 0, 0, 0.33)" }}
-              className="w-full flex items-center justify-center p-5 rounded-lg shadow-lg relative gap-5"
-            >
-              <div className="w-[20%]">
-                <Image
-                  src={item.product.images[0]}
-                  height={100}
-                  width={100}
-                  alt="fashion"
-                  className="rounded-lg"
-                />
-              </div>
-              <div className="w-[80%] text-sm flex flex-col gap-2">
-                <h1 className="font-semibold text-base">
-                  Created at{" "}
-                  {
-                    new Date(item.createdAt)
-                      .toISOString()
-                      .replace("T", " ")
-                      .split(".")[0]
-                  }
-                </h1>
-                <p>
-                  Status -{" "}
-                  <span
-                    className={`${item.status === "processing" ? "bg-gray-300" : item.status === "shipped" ? "bg-yellow-300" : "bg-green-500 text-white"} px-2 py-1 rounded-full`}
-                  >
-                    {item.status}
-                  </span>
-                </p>
-                <p>
-                  € {item.amountTotal / 100} for {item.product.quantity} item{" "}
-                </p>
-                {/* <span className="md:absolute top-5 right-5">View</span> */}
-              </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {data?.orders.map((order, index) => (
+          <div
+            key={index}
+            className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow duration-300"
+          >
+            <div className="flex justify-between items-center mb-4">
+              <span className="text-sm text-gray-500">Order #{index + 1}</span>
+              <span
+                className={`px-3 py-1 text-sm font-semibold rounded-full ${
+                  order.status === "delivered"
+                    ? "bg-green-100 text-green-700"
+                    : order.status === "processing"
+                      ? "bg-yellow-100 text-yellow-700"
+                      : "bg-red-100 text-red-700"
+                }`}
+              >
+                {order.status}
+              </span>
             </div>
-          );
-        })
-      )}
-    </section>
+            <div className="space-y-2">
+              <p className="text-lg font-semibold">
+                Total: € {order.amountTotal.toFixed(2)}
+              </p>
+              <p className="text-sm text-gray-500">
+                Date: {new Date(order.createdAt).toLocaleDateString()}
+              </p>
+              <p className="text-sm text-gray-500">
+                Quantity: {order.quantity} items
+              </p>
+            </div>
+            <button
+              onClick={() => {
+                router.push(`/my-account?_id=${order._id}`);
+                localStorage.setItem("nav", "Single Order");
+              }}
+              className="w-full mt-4 bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors duration-300"
+            >
+              View Order
+            </button>
+          </div>
+        ))}
+      </div>
+    </div>
   );
-}
+};
+
+export default Orders;

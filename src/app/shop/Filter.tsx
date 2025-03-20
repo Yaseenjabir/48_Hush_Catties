@@ -16,24 +16,26 @@ interface DatInt {
   setShowFilter: (item: boolean) => void;
   showFilter: boolean;
   data: Product[];
-  setData: React.Dispatch<React.SetStateAction<Product[]>>;
+  setData: (data: Product[]) => void;
+  setFilteredData: any;
+  filteredData: any;
 }
 
 const Filter: React.FC<DatInt> = ({
   showFilter,
   setShowFilter,
   data,
-  setData,
+  setFilteredData,
 }) => {
   const MyCheckbox = extendVariants(Checkbox, {
     variants: {
       color: {
         myColor: {
-          base: "bg-transparent text-[#fff]", // Base properties
-          wrapper: "p-0", // Wrapper properties
-          icon: "text-[#fff] bg-red-700 border-red-700 w-full h-full p-1", // Icon properties
-          label: "text-[#000]", // Label properties
-          hiddenInput: "outline-none", // Hidden input properties
+          base: "bg-transparent text-[#fff]",
+          wrapper: "p-0",
+          icon: "text-[#fff] bg-red-700 border-red-700 w-full h-full p-1",
+          label: "text-[#000]",
+          hiddenInput: "outline-none",
         },
       },
     },
@@ -51,8 +53,8 @@ const Filter: React.FC<DatInt> = ({
   });
 
   const searchParams = useSearchParams();
-
   const search = searchParams.get("category");
+
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedColors, setSelectedColors] = useState<string[]>([]);
   const [minMax, setMinMax] = useState<number | number[]>([10, 200]);
@@ -60,41 +62,8 @@ const Filter: React.FC<DatInt> = ({
   const [originalData, setOriginalData] = useState<Product[]>([]);
 
   useEffect(() => {
-    // When your data is fetched or available, save the unfiltered data
     setOriginalData(data);
   }, [data]);
-
-  // Filter Logic
-  const filterProducts = () => {
-    return data.filter((product: Product) => {
-      // 1. Category Matching
-      const isCategoryMatched =
-        selectedCategories.length === 0 || // If no categories are selected, include all
-        selectedCategories.includes(product.category); // Otherwise, check if the product's category is selected
-
-      // 2. Color Matching
-      const isColorMatched =
-        selectedColors.length === 0 || // If no colors are selected, include all
-        selectedColors.every((color) => product.color.includes(color)); // Otherwise, ensure all selected colors are in the product's colors
-
-      // 3. Size Matching
-      const isSizeMatched =
-        selectedSizes.length === 0 || // If no sizes are selected, include all
-        selectedSizes.every((size) => product.size.includes(size)); // Otherwise, ensure all selected sizes are in the product's sizes
-
-      // 4. Price Matching
-      const isPriceInRange = filterByPrice(product); // Check if the product's price is within the selected range
-      // Return true only if all conditions are met
-      return (
-        isCategoryMatched && isColorMatched && isSizeMatched && isPriceInRange
-      );
-    });
-  };
-
-  const filterByPrice = (product: Product) => {
-    const [minVal, maxVal] = minMax as [number, number];
-    return Number(product.price) >= minVal && Number(product.price) <= maxVal;
-  };
 
   useEffect(() => {
     if (search) {
@@ -102,31 +71,50 @@ const Filter: React.FC<DatInt> = ({
     }
   }, [search]);
 
+  const filterProducts = () => {
+    const filtered = originalData.filter((product: Product) => {
+      const isCategoryMatched = selectedCategories.length
+        ? selectedCategories.includes(product.category)
+        : true;
+
+      const isColorMatched = selectedColors.length
+        ? selectedColors.some((color) => product.color.includes(color))
+        : true;
+
+      const [minVal, maxVal] = minMax as [number, number];
+      const isPriceMatched =
+        Number(product.price) >= minVal && Number(product.price) <= maxVal;
+
+      const isSizeMatched = selectedSizes.length
+        ? selectedSizes.some((size) => product.size.includes(size))
+        : true;
+
+      return (
+        isCategoryMatched && isColorMatched && isPriceMatched && isSizeMatched
+      );
+    });
+
+    return filtered;
+  };
+
   const handleSearchFilter = () => {
     const filtered = filterProducts();
-    setData(filtered);
+    setFilteredData(filtered);
     setShowFilter(false);
   };
-  useEffect(() => {
-    const filtered = filterProducts();
-    setData(filtered);
-    setShowFilter(false);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedCategories]);
 
   const handleClearFilter = () => {
     setSelectedCategories([]);
     setSelectedColors([]);
     setMinMax([10, 200]);
     setSelectedSizes([]);
-    setData(originalData);
+    setFilteredData([]);
     setShowFilter(false);
   };
 
   return (
     <div
       onClick={() => setShowFilter(false)}
-      style={{ transitionDuration: "2000ms" }}
       className={`w-full h-screen fixed top-0 left-0 z-[1001] ${
         showFilter ? "visible backdrop-blur-sm" : "invisible backdrop-blur-none"
       } transition-all ease-in-out`}
@@ -146,11 +134,12 @@ const Filter: React.FC<DatInt> = ({
             className="text-2xl cursor-pointer hover:rotate-180 transition-all ease-in-out duration-1000"
           />
         </div>
-        {/* Categories  */}
+
         <div className="flex flex-col py-5 w-full border-b">
           <h1 className="font-extrabold text-xl text-gray-700">Categories</h1>
           <CheckboxGroup
             value={selectedCategories}
+            onClick={(e) => e.stopPropagation()}
             onChange={(e) => setSelectedCategories(e)}
             className="mt-5 w-full"
           >
@@ -166,7 +155,7 @@ const Filter: React.FC<DatInt> = ({
             ))}
           </CheckboxGroup>
         </div>
-        {/* Colors  */}
+
         <div className="flex flex-col py-5 w-full border-b">
           <h1 className="font-extrabold text-xl text-gray-700">Colors</h1>
           <div className="flex items-center justify-start flex-wrap gap-2 pt-5">
@@ -190,12 +179,11 @@ const Filter: React.FC<DatInt> = ({
             ))}
           </div>
         </div>
-        {/* Range Slider  */}
+
         <div className="flex flex-col py-5 w-full border-b">
           <h1 className="font-extrabold text-xl text-gray-700">Price</h1>
           <MyRangeSlider
             onChangeEnd={(newValue) => setMinMax(newValue as [number, number])}
-            className=""
             defaultValue={minMax}
             formatOptions={{ style: "currency", currency: "EUR" }}
             label="Price Range"
@@ -205,7 +193,7 @@ const Filter: React.FC<DatInt> = ({
             step={10}
           />
         </div>
-        {/* Size  */}
+
         <div className="flex flex-col py-5 w-full border-b">
           <h1 className="font-extrabold text-xl text-gray-700">Sizes</h1>
           <CheckboxGroup
@@ -225,6 +213,7 @@ const Filter: React.FC<DatInt> = ({
             ))}
           </CheckboxGroup>
         </div>
+
         <div className="w-full flex flex-col md:flex-row items-center justify-center gap-2 py-5">
           <button
             onClick={handleSearchFilter}

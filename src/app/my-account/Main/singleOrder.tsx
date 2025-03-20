@@ -1,24 +1,19 @@
 "use client";
 import * as React from "react";
-import { apiClient } from "../../../../../../client/axiosClient";
-import { GET_SINGLE_ORDERS, UPDATE_STATUS } from "@/constants/constants";
-import { useParams } from "next/navigation";
+import { GET_SINGLE_ORDERS } from "@/constants/constants";
+import { useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import { Spinner } from "@heroui/react";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+
 import { useTheme } from "@mui/material"; // Import useTheme from MUI
 import Image from "next/image";
+import { apiClient } from "../../../../client/axiosClient";
+import Heading from "./Heading";
 
-export default function Page() {
-  const { slug } = useParams();
+export default function SingleOrder() {
+  const searchParams = useSearchParams();
+  const slug = searchParams.get("_id");
+
   const [data, setData] = React.useState<any>();
   const [loader, setLoader] = React.useState(true);
   const theme = useTheme(); // Get the current theme from MUI
@@ -44,37 +39,13 @@ export default function Page() {
     fetchData();
   }, [slug, data]);
 
-  async function handleOrderChange(status) {
-    try {
-      setLoader(true);
-      const res = await apiClient.patch(UPDATE_STATUS, {
-        orderId: data._id,
-        status,
-      });
-      if (res.status === 200) {
-        toast.success("Status has been updated successfully");
-        setData((prev) => ({ ...prev, status }));
-      }
-    } catch {
-      toast.error("Something went wrong");
-    } finally {
-      setLoader(false);
-    }
-  }
-
   return (
     <div
       className={`container mx-auto px-4 py-8 ${
         isDarkMode ? "bg-[#1a1a1a]" : "bg-white"
       }`}
     >
-      <h1
-        className={`text-3xl font-bold mb-6 ${
-          isDarkMode ? "text-white" : "text-black"
-        }`}
-      >
-        Orders
-      </h1>
+      <Heading text="Order details" />
 
       {loader ? (
         <div className="w-full h-[50vh] flex items-center justify-center">
@@ -102,27 +73,21 @@ export default function Page() {
             <div>
               <p className={isDarkMode ? "text-gray-300" : "text-gray-600"}>
                 <span className="font-medium">Order Date:</span>{" "}
-                {new Date(data?.createdAt).toLocaleDateString()}
+                {new Date(data?.createdAt).toLocaleString()}
               </p>
               <p className={isDarkMode ? "text-gray-300" : "text-gray-600"}>
                 <span className="font-medium">Status : </span>{" "}
-                <Select
-                  defaultOpen
-                  defaultValue={data.status}
-                  onValueChange={(val) => handleOrderChange(val)}
+                <span
+                  className={`px-3 py-1 text-sm font-semibold rounded-full ${
+                    data.status === "delivered"
+                      ? "bg-green-100 text-green-700"
+                      : data.status === "processing"
+                        ? "bg-yellow-100 text-yellow-700"
+                        : "bg-red-100 text-red-700"
+                  }`}
                 >
-                  <SelectTrigger className="w-[180px]">
-                    <SelectValue placeholder="Change status" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectGroup>
-                      <SelectLabel>Status</SelectLabel>
-                      <SelectItem value="processing">Processing</SelectItem>
-                      <SelectItem value="shipped">Shipped</SelectItem>
-                      <SelectItem value="delivered">Delivered</SelectItem>
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
+                  {data.status}
+                </span>
               </p>
             </div>
             <div>

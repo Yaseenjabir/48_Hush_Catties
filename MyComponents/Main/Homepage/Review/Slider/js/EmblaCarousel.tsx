@@ -105,11 +105,6 @@ const EmblaCarousel: React.FC<PropType> = (props) => {
       .on("slideFocus", tweenScale);
   }, [emblaApi, tweenScale]);
 
-  const str = ` Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                  Soluta repellendus minima ullam quae ad dolore, ut expedita
-                  tempora modi voluptate, suscipit odio enim itaque neque`;
-  console.log(str.length);
-
   return (
     <div className="embla">
       <div className="embla__viewport" ref={emblaRef}>

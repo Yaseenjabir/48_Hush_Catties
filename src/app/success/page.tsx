@@ -24,8 +24,7 @@ export default function Page() {
         </p>
         <button
           onClick={() => {
-            router.push("/my-account");
-            localStorage.setItem("nav", "Orders");
+            router.push("/my-account?tab=Orders");
           }}
           className="inline-block bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition duration-300"
         >

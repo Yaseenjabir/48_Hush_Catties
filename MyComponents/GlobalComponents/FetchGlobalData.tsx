@@ -26,7 +26,6 @@ export default function FetchGlobalData() {
           cacheTimestamp && currentTime - cacheTimestamp > 12 * 60 * 60 * 1000; // 12 hours
 
         if (!cacheExpired) {
-          console.log("Using cached data");
           insertFn(cachedData.data); // Insert the cached data into the store
           return;
         }

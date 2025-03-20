@@ -11,8 +11,6 @@ export const itemSlice = (set: any) => ({
   removeItem: (itemId: string) =>
     set((state: any) => ({
       items: state.items.filter((product: any) => {
-        // console.log("productId : ", product._id);
-        // console.log("itemId : ", itemId);
         return product.productId._id !== itemId;
       }),
     })),

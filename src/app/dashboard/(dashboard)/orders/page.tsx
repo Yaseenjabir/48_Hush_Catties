@@ -5,7 +5,6 @@ import { apiClient } from "../../../../../client/axiosClient";
 import { GET_ALL_ORDERS } from "@/constants/constants";
 import { Spinner } from "@heroui/react";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
 import { useTheme } from "@mui/material";
 import {
   Select,
@@ -20,31 +19,22 @@ import {
 export default function OrdersPage() {
   const [data, setData] = React.useState<any>([]);
   const [available, setAvailable] = React.useState(true);
+
   const [loader, setLoader] = React.useState(true);
   const theme = useTheme();
+  const [filteredData, setFilteredData] = React.useState<any>([]);
 
-  const [activeStatus, setActiveStatus] = React.useState("processing");
+  const [activeStatus, setActiveStatus] = React.useState("all");
 
   const isDarkMode = theme.palette.mode === "dark";
   React.useEffect(() => {
     async function fetchOrders() {
       try {
         setLoader(true);
-        const res = await apiClient.get(
-          `${GET_ALL_ORDERS}?status=${activeStatus}`
-        );
-        console.log("res.data : ", res.data);
+        const res = await apiClient.get(`${GET_ALL_ORDERS}`);
+        console.log("Res : ", res.data);
         if (res.data.length > 0) {
-          const products = res.data?.flatMap((item: any) =>
-            item.products.map((product) => ({
-              product, // The product itself
-              createdAt: item.createdAt,
-              amountTotal: item.amountTotal,
-              status: item.status,
-              _id: item._id,
-            }))
-          );
-          setData(products);
+          setData(res.data);
           setAvailable(true);
         } else {
           setAvailable(false);
@@ -56,20 +46,32 @@ export default function OrdersPage() {
       }
     }
     fetchOrders();
-  }, [activeStatus]);
+  }, []);
+
+  const handleSelectChange = (val) => {
+    if (val === "all") {
+      setFilteredData([]);
+      setAvailable(true);
+      return;
+    }
+    const ans = data.filter((item) => item.status === val);
+    if (ans.length === 0) {
+      setAvailable(false);
+    } else {
+      setAvailable(true);
+    }
+    setActiveStatus(val);
+    setFilteredData(ans);
+  };
 
   const router = useRouter();
 
-  return loader ? (
-    <Spinner variant="spinner" />
-  ) : !available ? (
-    <div>No active orders are available</div>
-  ) : (
-    <div className="container mx-auto px-4 py-8">
+  return (
+    <>
       <div className="w-full flex items-center justify-end mb-10">
         <Select
           defaultValue={activeStatus}
-          onValueChange={(val) => setActiveStatus(val)}
+          onValueChange={(val) => handleSelectChange(val)}
         >
           <SelectTrigger className="w-[180px]">
             <SelectValue placeholder="Change status" />
@@ -77,6 +79,7 @@ export default function OrdersPage() {
           <SelectContent>
             <SelectGroup>
               <SelectLabel>Status</SelectLabel>
+              <SelectItem value="all">All</SelectItem>
               <SelectItem value="processing">Processing</SelectItem>
               <SelectItem value="shipped">Shipped</SelectItem>
               <SelectItem value="delivered">Delivered</SelectItem>
@@ -84,66 +87,71 @@ export default function OrdersPage() {
           </SelectContent>
         </Select>
       </div>
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-        {data.length > 0 &&
-          data.map((order: any) => (
-            <div
-              key={order.product._id}
-              className={`rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow cursor-pointer ${isDarkMode ? "bg-[#1a1a1a]" : "bg-white"}`}
-            >
-              <Image
-                src={order.product.images[0]}
-                alt={order.product.name}
-                width={300} // Set the width (required)
-                height={300} // Set the height (required)
-                className="w-full h-48 object-cover"
-              />
-              <div className="p-4">
-                <h2
-                  className={`text-xl font-semibold mb-2 ${isDarkMode ? "text-white" : "text-black"}`}
+      {loader ? (
+        <Spinner
+          variant="spinner"
+          color={`${isDarkMode ? "white" : "primary"}`}
+        />
+      ) : !available ? (
+        <div>No orders are available</div>
+      ) : (
+        <div className="container mx-auto px-4 py-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {(filteredData.length > 0 ? filteredData : data)?.map(
+              (order, index) => (
+                <div
+                  key={index}
+                  className={`${isDarkMode ? "bg-[#222222]" : "bg-white"} rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow duration-300`}
                 >
-                  {order.product.name.slice(0, 20) + "..."}
-                </h2>
-                <p
-                  className={` ${isDarkMode ? "text-white" : "text-gray-600"} mb-4`}
-                >
-                  {order.product.description.slice(0, 50) + "..."}
-                </p>
-                <div className="flex justify-between items-center mb-4">
-                  <p
-                    className={`text-lg font-medium ${isDarkMode ? "text-white" : "text-black"}`}
+                  <div className="flex justify-between items-center mb-4">
+                    <span
+                      className={`text-sm ${isDarkMode ? "text-white" : "text-gray-500"}`}
+                    >
+                      Order #{index + 1}
+                    </span>
+                    <span
+                      className={`px-3 py-1 text-sm font-semibold rounded-full ${
+                        order.status === "delivered"
+                          ? "bg-green-100 text-green-700"
+                          : order.status === "processing"
+                            ? "bg-yellow-100 text-yellow-700"
+                            : "bg-red-100 text-red-700"
+                      }`}
+                    >
+                      {order.status}
+                    </span>
+                  </div>
+                  <div className="space-y-2">
+                    <p
+                      className={`text-lg font-semibold ${isDarkMode ? "text-white" : "text-black"}`}
+                    >
+                      Total: € {order.amountTotal.toFixed(2)}
+                    </p>
+                    <p
+                      className={`text-sm ${isDarkMode ? "text-white" : "text-gray-500"}`}
+                    >
+                      Date: {new Date(order.createdAt).toLocaleDateString()}
+                    </p>
+                    <p
+                      className={`text-sm ${isDarkMode ? "text-white" : "text-gray-500"}`}
+                    >
+                      Quantity: {order.products.length} items
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => {
+                      router.push(`/dashboard/orders/${order._id}`);
+                    }}
+                    className="w-full mt-4 bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors duration-300"
                   >
-                    € {order.product.price}
-                  </p>
-                  <span
-                    className={`px-3 py-1 rounded-full text-sm font-medium ${
-                      order.status === "shipped"
-                        ? "bg-green-800 text-white"
-                        : order.status === "processing"
-                          ? "bg-yellow-100 text-yellow-800"
-                          : "bg-gray-100 text-gray-800"
-                    }`}
-                  >
-                    {order.status}
-                  </span>
+                    View Order
+                  </button>
                 </div>
-                <p
-                  className={`${isDarkMode ? "text-white" : "text-gray-600"} mb-2`}
-                >
-                  Quantity: {order.product.quantity}
-                </p>
-
-                <button
-                  onClick={() => router.push(`/dashboard/orders/${order._id}`)}
-                  className="bg-red-700 w-full py-2 font-semibold text-white mt-4 text-sm hover:bg-red-800"
-                >
-                  View Details
-                </button>
-              </div>
-            </div>
-          ))}
-      </div>
-    </div>
+              )
+            )}
+          </div>
+        </div>
+      )}
+    </>
   );
 }

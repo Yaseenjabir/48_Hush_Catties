@@ -6,7 +6,7 @@ import { RiDashboardHorizontalLine } from "react-icons/ri";
 import { RxCross1, RxHamburgerMenu } from "react-icons/rx";
 import { Playfair_Display } from "next/font/google";
 import { deleteCookie } from "@/constants/constants";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 const playfairDisplay = Playfair_Display({
   display: "swap",
   weight: ["400", "500", "600", "700", "800", "900"],
@@ -33,16 +33,17 @@ export default function Aside({
   data: any;
 }) {
   const router = useRouter();
+  const pathName = usePathname();
 
   const handleTabChange = (tab: string) => {
     setIsSlided(true);
     if (tab === "Logout") {
       deleteCookie("authToken");
       router.push("/auth");
-      localStorage.setItem("nav", "Dashboard");
+
       return;
     }
-    localStorage.setItem("nav", tab);
+    router.push(`${pathName}?tab=${activeTab}`);
     setActiveTab(tab);
   };
 

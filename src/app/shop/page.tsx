@@ -43,6 +43,7 @@ import Filter from "./Filter";
 export default function Page() {
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState<Product[]>([]);
+  const [filteredData, setFilteredData] = useState<Product[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 6; // Adjust as needed
   const { items, insertItems, removeItem, globalData } = useStore();
@@ -78,8 +79,6 @@ export default function Page() {
     setLoading(false);
   }, [globalData]);
 
-  console.log(debouncedHover);
-
   // Fetch wishlist on component mount
   useEffect(() => {
     const fetchWishlist = async () => {
@@ -97,8 +96,8 @@ export default function Page() {
             item.items.map((subItem) => subItem.productId)
           )
         );
-      } catch (error) {
-        console.error("Failed to fetch wishlist:", error);
+      } catch {
+        toast.error("Something went wrong");
       }
     };
 
@@ -218,15 +217,12 @@ export default function Page() {
         setWishlistItems((prev) => prev.filter((id) => id !== productId));
       }
       toast.success(res.data.message);
-    } catch (error) {
-      console.error("Failed to toggle wishlist:", error);
+    } catch {
       toast.error("Something went wrong");
     } finally {
       setWishlistLoading("");
     }
   };
-
-  // console.log(debouncedHover);
 
   return (
     <>
@@ -274,217 +270,226 @@ export default function Page() {
 
             {/* items listing  */}
             <div className="w-full mt-10 relative overflow-hidden grid grid-cols-1 sm:grid-cols-2 gap-10 md:grid-cols-3">
-              {currentData.map((item) => {
-                const isInCart = items.some(
-                  (cartItem) => cartItem.productId._id === item._id
-                );
-                const isInWishlist = wishlistItems.includes(item._id);
-                const averageRating = calculateAverageRating(item.reviews);
-                const isHovered = debouncedHover === item._id;
+              {(filteredData.length > 0 ? filteredData : currentData).map(
+                (item) => {
+                  const isInCart = items.some(
+                    (cartItem) => cartItem.productId._id === item._id
+                  );
+                  const isInWishlist = wishlistItems.includes(item._id);
+                  const averageRating = calculateAverageRating(item.reviews);
+                  const isHovered = debouncedHover === item._id;
 
-                return (
-                  <div
-                    onMouseEnter={() => setIsHovered(item._id)}
-                    onMouseLeave={() => setIsHovered("")}
-                    key={item._id}
-                    className="w-full overflow-hidden"
-                  >
-                    <div className="w-full relative">
-                      {/* Base Image */}
-                      <Image
-                        src={item.imageUrls[0]}
-                        width={500}
-                        height={500}
-                        layout="responsive"
-                        alt="fashion"
-                        className="transition-opacity duration-700 ease-in-out"
-                        style={{ opacity: isHovered ? 0 : 1 }}
-                      />
-                      {/* Hover Image */}
-                      <div
-                        className="absolute top-0 left-0 w-full h-full transition-opacity duration-700 ease-in-out"
-                        style={{ opacity: isHovered ? 1 : 0 }}
-                      >
+                  return (
+                    <div
+                      onMouseEnter={() => setIsHovered(item._id)}
+                      onMouseLeave={() => setIsHovered("")}
+                      key={item._id}
+                      className="w-full overflow-hidden"
+                    >
+                      <div className="w-full relative">
+                        {/* Base Image */}
                         <Image
-                          src={item.imageUrls[1]}
+                          src={item.imageUrls[0]}
                           width={500}
                           height={500}
                           layout="responsive"
                           alt="fashion"
+                          className="transition-opacity duration-700 ease-in-out"
+                          style={{ opacity: isHovered ? 0 : 1 }}
                         />
-                      </div>
-                      {/* Hover Actions */}
-                      <div
-                        className={`bg-white text-black absolute bottom-10 left-5 z-10 p-3 flex items-center justify-center text-xl gap-2 ${
-                          isHovered ? "translate-x-0" : "-translate-x-[120%]"
-                        } transition-all ease-in-out duration-300`}
-                      >
-                        {isInCart ? (
-                          <MdOutlineCancel
-                            onClick={() => removeItemFromCart(item._id)}
-                            className="border-r pr-2 text-3xl hover:text-red-700 cursor-pointer"
+                        {/* Hover Image */}
+                        <div
+                          className="absolute top-0 left-0 w-full h-full transition-opacity duration-700 ease-in-out"
+                          style={{ opacity: isHovered ? 1 : 0 }}
+                        >
+                          <Image
+                            src={item.imageUrls[1]}
+                            width={500}
+                            height={500}
+                            layout="responsive"
+                            alt="fashion"
                           />
-                        ) : (
-                          <Dialog>
-                            {item.stock ? (
-                              <DialogTrigger
-                                className="border-r pr-2 text-3xl hover:text-red-700 cursor-pointer bg-transparent hover:bg-transparent"
-                                asChild
-                              >
-                                {cartSpinnerIndex === item._id ? (
-                                  <Spinner
-                                    variant="spinner"
-                                    className="text-red-700 text-2xl"
-                                  />
-                                ) : (
-                                  <IoBagOutline className="text-black" />
-                                )}
-                              </DialogTrigger>
-                            ) : (
-                              <div
-                                onClick={() =>
-                                  toast.warning("This item is out of stock.")
-                                }
-                                className="p-0 rounded-none shadow-none border-r pr-2 cursor-not-allowed"
-                              >
-                                <IoBagOutline className="text-gray-400" />
-                              </div>
-                            )}
-
-                            <DialogContent className="sm:max-w-[425px]">
-                              <DialogHeader>
-                                <DialogTitle className="text-lg font-semibold text-center">
-                                  Select Options
-                                </DialogTitle>
-                              </DialogHeader>
-                              <div className="space-y-6">
-                                {/* Color Selection */}
-                                <div>
-                                  <Label className="block text-sm font-medium mb-2">
-                                    Available Color
-                                  </Label>
-                                  <div className="flex flex-wrap gap-2">
-                                    {item.color.map((color) => (
-                                      <Button
-                                        key={color}
-                                        variant={
-                                          selectedColor === color
-                                            ? "default"
-                                            : "outline"
-                                        }
-                                        className={`rounded-full px-4 py-2 text-sm ${
-                                          selectedColor === color
-                                            ? "bg-blue-600 text-white hover:bg-blue-700"
-                                            : "bg-white text-gray-700 hover:bg-gray-100"
-                                        }`}
-                                        onClick={() => setSelectedColor(color)}
-                                      >
-                                        {color}
-                                      </Button>
-                                    ))}
-                                  </div>
-                                </div>
-
-                                {/* Size Selection */}
-                                <div>
-                                  <Label className="block text-sm font-medium mb-2">
-                                    Available Size
-                                  </Label>
-                                  <div className="flex flex-wrap gap-2">
-                                    {item.size.map((size) => (
-                                      <Button
-                                        key={size}
-                                        variant={
-                                          selectedSize === size
-                                            ? "default"
-                                            : "outline"
-                                        }
-                                        className={`rounded-full px-4 py-2 text-sm ${
-                                          selectedSize === size
-                                            ? "bg-blue-600 text-white hover:bg-blue-700"
-                                            : "bg-white text-gray-700 hover:bg-gray-100"
-                                        }`}
-                                        onClick={() => setSelectedSize(size)}
-                                      >
-                                        {size}
-                                      </Button>
-                                    ))}
-                                  </div>
-                                </div>
-                              </div>
-
-                              {/* Confirm Button */}
-                              <div className="mt-6 flex justify-end">
-                                <Button
-                                  onClick={() =>
-                                    handleAddToCart(
-                                      item._id,
-                                      selectedColor,
-                                      selectedSize
-                                    )
-                                  }
-                                  className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg"
+                        </div>
+                        {/* Hover Actions */}
+                        <div
+                          className={`bg-white text-black absolute bottom-10 left-5 z-10 p-3 flex items-center justify-center text-xl gap-2 ${
+                            isHovered ? "translate-x-0" : "-translate-x-[120%]"
+                          } transition-all ease-in-out duration-300`}
+                        >
+                          {isInCart ? (
+                            <MdOutlineCancel
+                              onClick={() => removeItemFromCart(item._id)}
+                              className="border-r pr-2 text-3xl hover:text-red-700 cursor-pointer"
+                            />
+                          ) : (
+                            <Dialog>
+                              {item.stock ? (
+                                <DialogTrigger
+                                  className="border-r pr-2 text-3xl hover:text-red-700 cursor-pointer bg-transparent hover:bg-transparent"
+                                  asChild
                                 >
-                                  Confirm
-                                </Button>
-                              </div>
-                            </DialogContent>
-                          </Dialog>
-                        )}
-                        {wishlistLoading && wishlistLoading === item._id ? (
-                          <Spinner variant="spinner" className="text-red-700" />
-                        ) : isInWishlist ? (
-                          <IoMdHeart
-                            onClick={() => toggleWishlist(item._id)}
-                            className="border-r pr-2 text-3xl hover:text-red-700 cursor-pointer"
-                          />
-                        ) : (
-                          <IoIosHeartEmpty
-                            onClick={() => toggleWishlist(item._id)}
-                            className="border-r pr-2 text-3xl hover:text-red-700 cursor-pointer"
-                          />
-                        )}
-                        <FiExternalLink
-                          onClick={() => router.push(`/shop/${item._id}`)}
-                          className="hover:text-red-700 cursor-pointer"
-                        />
-                      </div>
-                    </div>
+                                  {cartSpinnerIndex === item._id ? (
+                                    <Spinner
+                                      variant="spinner"
+                                      className="text-red-700 text-2xl"
+                                    />
+                                  ) : (
+                                    <IoBagOutline className="text-black" />
+                                  )}
+                                </DialogTrigger>
+                              ) : (
+                                <div
+                                  onClick={() =>
+                                    toast.warning("This item is out of stock.")
+                                  }
+                                  className="p-0 rounded-none shadow-none border-r pr-2 cursor-not-allowed"
+                                >
+                                  <IoBagOutline className="text-gray-400" />
+                                </div>
+                              )}
 
-                    <div className="py-5 flex flex-col gap-3 border px-1 border-t-0">
-                      <div>
-                        <h1 className="text-sm text-gray-400">
-                          Fashion Manufacturer
-                        </h1>
-                        <div className="flex items-center gap-1">
-                          {renderStars(averageRating)}
-                          <span className="text-sm text-gray-600">
-                            ({item.reviews.length} reviews)
-                          </span>
+                              <DialogContent className="sm:max-w-[425px]">
+                                <DialogHeader>
+                                  <DialogTitle className="text-lg font-semibold text-center">
+                                    Select Options
+                                  </DialogTitle>
+                                </DialogHeader>
+                                <div className="space-y-6">
+                                  {/* Color Selection */}
+                                  <div>
+                                    <Label className="block text-sm font-medium mb-2">
+                                      Available Color
+                                    </Label>
+                                    <div className="flex flex-wrap gap-2">
+                                      {item.color.map((color) => (
+                                        <Button
+                                          key={color}
+                                          variant={
+                                            selectedColor === color
+                                              ? "default"
+                                              : "outline"
+                                          }
+                                          className={`rounded-full px-4 py-2 text-sm ${
+                                            selectedColor === color
+                                              ? "bg-blue-600 text-white hover:bg-blue-700"
+                                              : "bg-white text-gray-700 hover:bg-gray-100"
+                                          }`}
+                                          onClick={() =>
+                                            setSelectedColor(color)
+                                          }
+                                        >
+                                          {color}
+                                        </Button>
+                                      ))}
+                                    </div>
+                                  </div>
+
+                                  {/* Size Selection */}
+                                  <div>
+                                    <Label className="block text-sm font-medium mb-2">
+                                      Available Size
+                                    </Label>
+                                    <div className="flex flex-wrap gap-2">
+                                      {item.size.map((size) => (
+                                        <Button
+                                          key={size}
+                                          variant={
+                                            selectedSize === size
+                                              ? "default"
+                                              : "outline"
+                                          }
+                                          className={`rounded-full px-4 py-2 text-sm ${
+                                            selectedSize === size
+                                              ? "bg-blue-600 text-white hover:bg-blue-700"
+                                              : "bg-white text-gray-700 hover:bg-gray-100"
+                                          }`}
+                                          onClick={() => setSelectedSize(size)}
+                                        >
+                                          {size}
+                                        </Button>
+                                      ))}
+                                    </div>
+                                  </div>
+                                </div>
+
+                                {/* Confirm Button */}
+                                <div className="mt-6 flex justify-end">
+                                  <Button
+                                    onClick={() =>
+                                      handleAddToCart(
+                                        item._id,
+                                        selectedColor,
+                                        selectedSize
+                                      )
+                                    }
+                                    className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg"
+                                  >
+                                    Confirm
+                                  </Button>
+                                </div>
+                              </DialogContent>
+                            </Dialog>
+                          )}
+                          {wishlistLoading && wishlistLoading === item._id ? (
+                            <Spinner
+                              variant="spinner"
+                              className="text-red-700"
+                            />
+                          ) : isInWishlist ? (
+                            <IoMdHeart
+                              onClick={() => toggleWishlist(item._id)}
+                              className="border-r pr-2 text-3xl hover:text-red-700 cursor-pointer"
+                            />
+                          ) : (
+                            <IoIosHeartEmpty
+                              onClick={() => toggleWishlist(item._id)}
+                              className="border-r pr-2 text-3xl hover:text-red-700 cursor-pointer"
+                            />
+                          )}
+                          <FiExternalLink
+                            onClick={() => router.push(`/shop/${item._id}`)}
+                            className="hover:text-red-700 cursor-pointer"
+                          />
                         </div>
                       </div>
-                      <h1 className="font-bold hover:text-red-700 text-gray-800 cursor-pointer hover:underline">
-                        <Link href={`/shop/${item._id}`}>{item.name}</Link>
-                      </h1>
-                      <p className="text-gray-500 font-light">${item.price}</p>
-                      {item.stock ? (
-                        <div className="flex items-center text-green-500 gap-2">
-                          <span className="flex items-center gap-2">
-                            <FaCheck /> In Stock
-                          </span>
+
+                      <div className="py-5 flex flex-col gap-3 border px-1 border-t-0">
+                        <div>
+                          <h1 className="text-sm text-gray-400">
+                            Fashion Manufacturer
+                          </h1>
+                          <div className="flex items-center gap-1">
+                            {renderStars(averageRating)}
+                            <span className="text-sm text-gray-600">
+                              ({item.reviews.length} reviews)
+                            </span>
+                          </div>
                         </div>
-                      ) : (
-                        <div className="flex items-center text-red-500 gap-2">
-                          <span className="flex items-center gap-2">
-                            <MdCancel />
-                            Out of Stock
-                          </span>
-                        </div>
-                      )}
+                        <h1 className="font-bold hover:text-red-700 text-gray-800 cursor-pointer hover:underline">
+                          <Link href={`/shop/${item._id}`}>{item.name}</Link>
+                        </h1>
+                        <p className="text-gray-500 font-light">
+                          €{item.price}
+                        </p>
+                        {item.stock ? (
+                          <div className="flex items-center text-green-500 gap-2">
+                            <span className="flex items-center gap-2">
+                              <FaCheck /> In Stock
+                            </span>
+                          </div>
+                        ) : (
+                          <div className="flex items-center text-red-500 gap-2">
+                            <span className="flex items-center gap-2">
+                              <MdCancel />
+                              Out of Stock
+                            </span>
+                          </div>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                );
-              })}
+                  );
+                }
+              )}
             </div>
 
             {/* Pagination  */}
@@ -496,7 +501,10 @@ export default function Page() {
                 onChange={(page) => setCurrentPage(page)}
               />
             </div>
+
             <Filter
+              setFilteredData={setFilteredData}
+              filteredData={filteredData}
               showFilter={showFilter}
               setShowFilter={setShowFilter}
               data={data}
