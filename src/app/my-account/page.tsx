@@ -11,25 +11,26 @@ import { GET_USER_PROFILE, getCookie } from "@/constants/constants";
 import { apiClient } from "../../../client/axiosClient";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { Spinner } from "@heroui/react";
-import SingleOrder from "./Main/singleOrder";
 
 export default function Page() {
   const router = useRouter();
-  const pathname = usePathname(); // Get the current pathname
-  const searchParams = useSearchParams(); // Get the query parameters
-  const tabParam = searchParams.get("tab"); // Get the "tab" parameter from the URL
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const tabParam = searchParams.get("tab");
 
-  const [activeTab, setActiveTab] = useState(tabParam || "Dashboard"); // Set activeTab based on the URL parameter
+  const [activeTab, setActiveTab] = useState(tabParam || "Dashboard");
   const [isSlided, setIsSlided] = useState(true);
   const [data, setData] = useState([]);
   const [loader, setLoader] = useState(true);
 
-  // Update the URL when the active tab changes
+  // Update the URL only if the tabParam is different from activeTab
   useEffect(() => {
     if (tabParam !== activeTab) {
       router.push(`${pathname}?tab=${activeTab}`);
     }
-  }, [activeTab, pathname, router, tabParam]);
+  }, [activeTab, router, tabParam, pathname]); // Only run when activeTab changes
+
+  console.log(activeTab);
 
   // Fetch user profile data
   useEffect(() => {
@@ -95,8 +96,6 @@ export default function Page() {
           <Orders data={data} />
         ) : activeTab === "Account details" ? (
           <ProfileDetails data={data} />
-        ) : activeTab === "Single Order" ? (
-          <SingleOrder />
         ) : (
           <Wishlist data={data} />
         )}

@@ -41,8 +41,7 @@ const Orders = ({ data }) => {
             </div>
             <button
               onClick={() => {
-                router.push(`/my-account?_id=${order._id}`);
-                localStorage.setItem("nav", "Single Order");
+                router.push(`/my-account/order?_id=${order._id}`);
               }}
               className="w-full mt-4 bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors duration-300"
             >
