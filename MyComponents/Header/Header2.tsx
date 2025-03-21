@@ -122,7 +122,10 @@ export default function Header2() {
               </Tooltip>
             </TooltipProvider>
           </div>
-          <div className="w-full text-center md:text-start">
+          <div
+            onClick={() => router.push("/")}
+            className="w-full text-center md:text-start"
+          >
             <h1 className="font-extrabold text-3xl cursor-pointer">
               Hush <span className="">Catties</span>
             </h1>

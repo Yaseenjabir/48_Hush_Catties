@@ -23,6 +23,7 @@ const formSchema = z.object({
   firstName: z.string().min(4).max(50),
   lastName: z.string().min(4).max(50),
   email: z.string().email("Please write a valid email"),
+  phone: z.string(),
   password: z.string().min(6).max(50),
 });
 
@@ -44,13 +45,12 @@ export default function Signup({ setShowLogin }: { setShowLogin: any }) {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
-      setLoading(true);
+      // setLoading(true);
       const res = await apiClient.post(USER_SIGNUP_ROUTE, values, {
         headers: {
           "Content-Type": "application/json",
         },
       });
-
       if (res.status === 200) {
         setCookie("authToken", res.data.token, 1);
         setIsAuthenticated("/my-account");
@@ -127,6 +127,25 @@ export default function Signup({ setShowLogin }: { setShowLogin: any }) {
                       <Input
                         className="focus:outline-none rounded-full bg-gray-100 focus:bg-gray-200 placeholder:text-sm"
                         placeholder="Email"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="phone"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="font-extrabold text-[12px]">
+                      PHONE
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        className="focus:outline-none rounded-full bg-gray-100 focus:bg-gray-200 placeholder:text-sm"
+                        placeholder="Phone"
                         {...field}
                       />
                     </FormControl>

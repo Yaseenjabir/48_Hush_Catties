@@ -7,6 +7,7 @@ import { RxCross1, RxHamburgerMenu } from "react-icons/rx";
 import { Playfair_Display } from "next/font/google";
 import { deleteCookie } from "@/constants/constants";
 import { usePathname, useRouter } from "next/navigation";
+import { AiOutlineHome } from "react-icons/ai";
 const playfairDisplay = Playfair_Display({
   display: "swap",
   weight: ["400", "500", "600", "700", "800", "900"],
@@ -40,7 +41,10 @@ export default function Aside({
     if (tab === "Logout") {
       deleteCookie("authToken");
       router.push("/auth");
-
+      return;
+    }
+    if (tab === "Home") {
+      router.push("/");
       return;
     }
     router.push(`${pathName}?tab=${activeTab}`);
@@ -70,6 +74,11 @@ export default function Aside({
     },
     {
       id: 5,
+      name: "Home",
+      icon: <AiOutlineHome className="text-xl" />,
+    },
+    {
+      id: 6,
       name: "Logout",
       icon: <IoIosLogOut className="text-xl" />,
     },

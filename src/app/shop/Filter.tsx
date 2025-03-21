@@ -53,7 +53,7 @@ const Filter: React.FC<DatInt> = ({
   });
 
   const searchParams = useSearchParams();
-  const search = searchParams.get("category");
+  const search = searchParams.get("categories");
 
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedColors, setSelectedColors] = useState<string[]>([]);
@@ -70,6 +70,12 @@ const Filter: React.FC<DatInt> = ({
       setSelectedCategories([search]);
     }
   }, [search]);
+
+  useEffect(() => {
+    const filtered = filterProducts();
+    setFilteredData(filtered);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedCategories, selectedColors, minMax, selectedSizes]);
 
   const filterProducts = () => {
     const filtered = originalData.filter((product: Product) => {

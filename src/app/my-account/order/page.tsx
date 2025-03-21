@@ -4,11 +4,10 @@ import { GET_SINGLE_ORDERS } from "@/constants/constants";
 import { useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import { Spinner } from "@heroui/react";
-
-import { useTheme } from "@mui/material"; // Import useTheme from MUI
 import Image from "next/image";
 import { apiClient } from "../../../../client/axiosClient";
 import Heading from "../Main/Heading";
+import { locations } from "@/lib/locations";
 
 export default function Page() {
   const searchParams = useSearchParams();
@@ -16,8 +15,43 @@ export default function Page() {
 
   const [data, setData] = React.useState<any>();
   const [loader, setLoader] = React.useState(true);
-  const theme = useTheme(); // Get the current theme from MUI
-  const isDarkMode = theme.palette.mode === "dark"; // Check if dark mode is active
+
+  // Helper function to get country name
+  const getCountryName = (countryValue: string) => {
+    const country = locations.find((loc) => loc.value === countryValue);
+    return country ? country.countryName : countryValue; // Fallback to value if not found
+  };
+
+  // Helper function to get state name
+  const getStateName = (stateValue: string) => {
+    const country = locations.find((loc) =>
+      loc.states.some((state) => state.value === stateValue)
+    );
+    if (country) {
+      const state = country.states.find((state) => state.value === stateValue);
+      return state ? state.stateName : stateValue; // Fallback to value if not found
+    }
+    return stateValue; // Fallback to value if country not found
+  };
+
+  // Helper function to get city name
+  const getCityName = (cityValue: string) => {
+    const country = locations.find((loc) =>
+      loc.states.some((state) =>
+        state.cities.some((city) => city.value === cityValue)
+      )
+    );
+    if (country) {
+      const state = country.states.find((state) =>
+        state.cities.some((city) => city.value === cityValue)
+      );
+      if (state) {
+        const city = state.cities.find((city) => city.value === cityValue);
+        return city ? city.cityName : cityValue; // Fallback to value if not found
+      }
+    }
+    return cityValue; // Fallback to value if country or state not found
+  };
 
   React.useEffect(() => {
     const fetchData = async () => {
@@ -40,11 +74,7 @@ export default function Page() {
   }, [slug, data]);
 
   return (
-    <div
-      className={`container mx-auto px-4 py-8 ${
-        isDarkMode ? "bg-[#1a1a1a]" : "bg-white"
-      }`}
-    >
+    <div className="container mx-auto px-4 py-8 bg-white">
       <Heading text="Order details" />
 
       {loader ? (
@@ -52,30 +82,19 @@ export default function Page() {
           <Spinner variant="spinner" />
         </div>
       ) : data === undefined ? (
-        <p className={isDarkMode ? "text-white" : "text-black"}>
-          No data available
-        </p>
+        <p className="text-black">No data available</p>
       ) : (
-        <div
-          key={data?._id}
-          className={`rounded-lg shadow-md p-6 mb-6 ${
-            isDarkMode ? "bg-[#1a1a1a]" : "bg-white"
-          }`}
-        >
-          <h2
-            className={`text-xl font-semibold mb-4 ${
-              isDarkMode ? "text-white" : "text-black"
-            }`}
-          >
+        <div key={data?._id} className="rounded-lg shadow-md p-6 mb-6 bg-white">
+          <h2 className="text-xl font-semibold mb-4 text-black">
             Order #{data?._id}
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
             <div>
-              <p className={isDarkMode ? "text-gray-300" : "text-gray-600"}>
+              <p className="text-gray-600">
                 <span className="font-medium">Order Date:</span>{" "}
                 {new Date(data?.createdAt).toLocaleString()}
               </p>
-              <p className={isDarkMode ? "text-gray-300" : "text-gray-600"}>
+              <p className="text-gray-600">
                 <span className="font-medium">Status : </span>{" "}
                 <span
                   className={`px-3 py-1 text-sm font-semibold rounded-full ${
@@ -91,63 +110,50 @@ export default function Page() {
               </p>
             </div>
             <div>
-              <p className={isDarkMode ? "text-gray-300" : "text-gray-600"}>
+              <p className="text-gray-600">
                 <span className="font-medium">Total Amount:</span> €{" "}
                 {(data?.amountTotal / 100).toFixed(2)}
               </p>
-              <p className={isDarkMode ? "text-gray-300" : "text-gray-600"}>
+              <p className="text-gray-600">
                 <span className="font-medium">Customer:</span>{" "}
                 {data?.userId.firstName} {data?.userId.lastName}
               </p>
-              <p className={isDarkMode ? "text-gray-300" : "text-gray-600"}>
+              <p className="text-gray-600">
                 <span className="font-medium">Email:</span> {data?.userId.email}
               </p>
             </div>
           </div>
 
           <div className="mb-6">
-            <h3
-              className={`text-lg font-semibold mb-2 ${
-                isDarkMode ? "text-white" : "text-black"
-              }`}
-            >
+            <h3 className="text-lg font-semibold mb-2 text-black">
               Customer Details
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <p className={isDarkMode ? "text-gray-300" : "text-gray-600"}>
+                <p className="text-gray-600">
                   <span className="font-medium">Name:</span>{" "}
                   {data?.customerDetails.name}
                 </p>
-                <p className={isDarkMode ? "text-gray-300" : "text-gray-600"}>
+                <p className="text-gray-600">
                   <span className="font-medium">Email:</span>{" "}
                   {data?.customerDetails.email}
                 </p>
               </div>
               <div>
-                <p className={isDarkMode ? "text-gray-300" : "text-gray-600"}>
+                <p className="text-gray-600">
                   <span className="font-medium">Address:</span>{" "}
                   {data?.customerDetails.address.line1},{" "}
-                  {data?.customerDetails.address.line2 && (
-                    <>{data?.customerDetails.address.line2}, </>
-                  )}
-                  {data?.customerDetails.address.city},{" "}
-                  {data?.customerDetails.address.state}{" "}
-                  {data?.customerDetails.address.postal_code},{" "}
-                  {data?.customerDetails.address.country}
+                  {data?.customerDetails.address.line2},{" "}
+                  {getCityName(data?.customerDetails.address.city)},{" "}
+                  {getStateName(data?.customerDetails.address.state)},{" "}
+                  {getCountryName(data?.customerDetails.address.country)}
                 </p>
               </div>
             </div>
           </div>
 
           <div>
-            <h3
-              className={`text-lg font-semibold mb-4 ${
-                isDarkMode ? "text-white" : "text-black"
-              }`}
-            >
-              Products
-            </h3>
+            <h3 className="text-lg font-semibold mb-4 text-black">Products</h3>
             {data?.products.map((product, index) => (
               <div
                 key={index}
@@ -162,38 +168,24 @@ export default function Page() {
                     className="w-24 h-24 object-cover rounded-lg"
                   />
                   <div className="flex-1">
-                    <h4
-                      className={`text-lg font-medium ${
-                        isDarkMode ? "text-white" : "text-black"
-                      }`}
-                    >
+                    <h4 className="text-lg font-medium text-black">
                       {product.name}
                     </h4>
-                    <p
-                      className={isDarkMode ? "text-gray-300" : "text-gray-600"}
-                    >
+                    <p className="text-gray-600">
                       {product.description.slice(0, 200) + "..."}
                     </p>
-                    <p
-                      className={isDarkMode ? "text-gray-300" : "text-gray-600"}
-                    >
-                      <span className="font-bold">Price :</span> $
+                    <p className="text-gray-600">
+                      <span className="font-bold">Price :</span> €{" "}
                       {product.price.toFixed(2)}
                     </p>
-                    <p
-                      className={isDarkMode ? "text-gray-300" : "text-gray-600"}
-                    >
+                    <p className="text-gray-600">
                       <span className="font-bold">Quantity :</span>{" "}
                       {product.quantity}
                     </p>
-                    <p
-                      className={isDarkMode ? "text-gray-300" : "text-gray-600"}
-                    >
+                    <p className="text-gray-600">
                       <span className="font-bold">Color :</span> {product.color}
                     </p>
-                    <p
-                      className={isDarkMode ? "text-gray-300" : "text-gray-600"}
-                    >
+                    <p className="text-gray-600">
                       <span className="font-bold">Size :</span> {product.size}
                     </p>
                   </div>

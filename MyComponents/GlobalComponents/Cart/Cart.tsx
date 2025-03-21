@@ -8,14 +8,13 @@ import { GoPlus } from "react-icons/go";
 import { apiClient } from "../../../client/axiosClient";
 import {
   CHANGE_QUANTITY,
-  CREATE_PAYMENT,
   FETCH_CART_ITEMS,
   getCookie,
 } from "@/constants/constants";
 import useStore from "@/store/store";
 import { playfairDisplay } from "@/app/my-account/Main/Heading";
 import Link from "next/link";
-import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 export default function Cart() {
   let { isOpen, onOpen, onOpenChange } = useDisclosure();
@@ -69,39 +68,7 @@ export default function Cart() {
     }, 0);
   };
 
-  const handleCheckout = async () => {
-    const token = getCookie("authToken");
-
-    const products = items.map((item) => {
-      return {
-        _id: item.productId._id,
-        name: item.productId.name,
-        description: item.productId.description,
-        price: Number(item.productId.price),
-        quantity: item.quantity,
-        images: item.productId.imageUrls,
-        color: item.color,
-        size: item.size,
-      };
-    });
-
-    try {
-      // Initiate payment
-      const res = await apiClient.post(
-        CREATE_PAYMENT,
-        {
-          products,
-        },
-        { headers: { Authorization: token } }
-      );
-      if (res.status === 200) {
-        window.location.href = res.data.url;
-      }
-    } catch (ex) {
-      toast.error("Something went wrong!!");
-      console.log(ex);
-    }
-  };
+  const router = useRouter();
 
   return (
     <>
@@ -217,8 +184,8 @@ export default function Cart() {
               </Link>
               <button
                 onClick={() => {
+                  router.push("/cart");
                   onOpenChange();
-                  handleCheckout();
                 }}
                 className="py-2 border border-red-700 font-light text-white w-full bg-red-700 hover:bg-transparent flex items-center justify-center hover:text-red-700 transition-all ease-in-out duration-300"
               >

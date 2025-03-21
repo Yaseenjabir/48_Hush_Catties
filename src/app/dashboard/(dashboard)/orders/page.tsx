@@ -22,11 +22,12 @@ export default function OrdersPage() {
 
   const [loader, setLoader] = React.useState(true);
   const theme = useTheme();
+  const isDarkMode = theme.palette.mode === "dark";
+
   const [filteredData, setFilteredData] = React.useState<any>([]);
 
   const [activeStatus, setActiveStatus] = React.useState("all");
 
-  const isDarkMode = theme.palette.mode === "dark";
   React.useEffect(() => {
     async function fetchOrders() {
       try {

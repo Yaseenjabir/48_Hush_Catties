@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/select";
 import { useTheme } from "@mui/material"; // Import useTheme from MUI
 import Image from "next/image";
+import { locations } from "@/lib/locations";
 
 export default function Page() {
   const { slug } = useParams();
@@ -62,6 +63,43 @@ export default function Page() {
     }
   }
 
+  // Helper function to get country name
+  const getCountryName = (countryValue: string) => {
+    const country = locations.find((loc) => loc.value === countryValue);
+    return country ? country.countryName : countryValue; // Fallback to value if not found
+  };
+
+  // Helper function to get state name
+  const getStateName = (stateValue: string) => {
+    const country = locations.find((loc) =>
+      loc.states.some((state) => state.value === stateValue)
+    );
+    if (country) {
+      const state = country.states.find((state) => state.value === stateValue);
+      return state ? state.stateName : stateValue; // Fallback to value if not found
+    }
+    return stateValue; // Fallback to value if country not found
+  };
+
+  // Helper function to get city name
+  const getCityName = (cityValue: string) => {
+    const country = locations.find((loc) =>
+      loc.states.some((state) =>
+        state.cities.some((city) => city.value === cityValue)
+      )
+    );
+    if (country) {
+      const state = country.states.find((state) =>
+        state.cities.some((city) => city.value === cityValue)
+      );
+      if (state) {
+        const city = state.cities.find((city) => city.value === cityValue);
+        return city ? city.cityName : cityValue; // Fallback to value if not found
+      }
+    }
+    return cityValue; // Fallback to value if country or state not found
+  };
+
   return (
     <div
       className={`container mx-auto px-4 py-8 ${
@@ -78,7 +116,10 @@ export default function Page() {
 
       {loader ? (
         <div className="w-full h-[50vh] flex items-center justify-center">
-          <Spinner variant="spinner" />
+          <Spinner
+            variant="spinner"
+            color={`${isDarkMode ? "white" : "primary"}`}
+          />
         </div>
       ) : data === undefined ? (
         <p className={isDarkMode ? "text-white" : "text-black"}>
@@ -163,13 +204,10 @@ export default function Page() {
                 <p className={isDarkMode ? "text-gray-300" : "text-gray-600"}>
                   <span className="font-medium">Address:</span>{" "}
                   {data?.customerDetails.address.line1},{" "}
-                  {data?.customerDetails.address.line2 && (
-                    <>{data?.customerDetails.address.line2}, </>
-                  )}
-                  {data?.customerDetails.address.city},{" "}
-                  {data?.customerDetails.address.state}{" "}
-                  {data?.customerDetails.address.postal_code},{" "}
-                  {data?.customerDetails.address.country}
+                  {data?.customerDetails.address.line2},{" "}
+                  {getCityName(data?.customerDetails.address.city)},{" "}
+                  {getStateName(data?.customerDetails.address.state)}{" "}
+                  {getCountryName(data?.customerDetails.address.country)}
                 </p>
               </div>
             </div>

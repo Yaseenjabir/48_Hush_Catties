@@ -469,7 +469,7 @@ export default function Page() {
                           <Link href={`/shop/${item._id}`}>{item.name}</Link>
                         </h1>
                         <p className="text-gray-500 font-light">
-                          €{item.price}
+                          € {Number(item.price).toFixed(2)}
                         </p>
                         {item.stock ? (
                           <div className="flex items-center text-green-500 gap-2">

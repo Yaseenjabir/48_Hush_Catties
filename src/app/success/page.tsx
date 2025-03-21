@@ -20,7 +20,7 @@ export default function Page() {
         <p className="text-gray-700 mb-6 max-w-[600px]">
           Thank you for your purchase. Your payment was successful, and your
           order is being processed. To check your order status, visit your
-          dashboard (/my-account)
+          dashboard
         </p>
         <button
           onClick={() => {
