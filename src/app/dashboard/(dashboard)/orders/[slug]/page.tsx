@@ -250,7 +250,7 @@ export default function Page() {
                     <p
                       className={isDarkMode ? "text-gray-300" : "text-gray-600"}
                     >
-                      <span className="font-bold">Price :</span> $
+                      <span className="font-bold">Price :</span> €
                       {product.price.toFixed(2)}
                     </p>
                     <p

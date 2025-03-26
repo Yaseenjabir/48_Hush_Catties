@@ -102,11 +102,15 @@ export default function OrdersPage() {
               (order, index) => (
                 <div
                   key={index}
-                  className={`${isDarkMode ? "bg-[#222222]" : "bg-white"} rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow duration-300`}
+                  className={`${
+                    isDarkMode ? "bg-[#222222]" : "bg-white"
+                  } rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow duration-300`}
                 >
                   <div className="flex justify-between items-center mb-4">
                     <span
-                      className={`text-sm ${isDarkMode ? "text-white" : "text-gray-500"}`}
+                      className={`text-sm ${
+                        isDarkMode ? "text-white" : "text-gray-500"
+                      }`}
                     >
                       Order #{index + 1}
                     </span>
@@ -115,8 +119,8 @@ export default function OrdersPage() {
                         order.status === "delivered"
                           ? "bg-green-100 text-green-700"
                           : order.status === "processing"
-                            ? "bg-yellow-100 text-yellow-700"
-                            : "bg-red-100 text-red-700"
+                          ? "bg-yellow-100 text-yellow-700"
+                          : "bg-red-100 text-red-700"
                       }`}
                     >
                       {order.status}
@@ -124,17 +128,23 @@ export default function OrdersPage() {
                   </div>
                   <div className="space-y-2">
                     <p
-                      className={`text-lg font-semibold ${isDarkMode ? "text-white" : "text-black"}`}
+                      className={`text-lg font-semibold ${
+                        isDarkMode ? "text-white" : "text-black"
+                      }`}
                     >
-                      Total: € {order.amountTotal.toFixed(2)}
+                      Total: € {(order.amountTotal / 100).toFixed(2)}
                     </p>
                     <p
-                      className={`text-sm ${isDarkMode ? "text-white" : "text-gray-500"}`}
+                      className={`text-sm ${
+                        isDarkMode ? "text-white" : "text-gray-500"
+                      }`}
                     >
                       Date: {new Date(order.createdAt).toLocaleDateString()}
                     </p>
                     <p
-                      className={`text-sm ${isDarkMode ? "text-white" : "text-gray-500"}`}
+                      className={`text-sm ${
+                        isDarkMode ? "text-white" : "text-gray-500"
+                      }`}
                     >
                       Quantity: {order.products.length} items
                     </p>
