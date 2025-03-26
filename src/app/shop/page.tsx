@@ -328,14 +328,7 @@ export default function Page() {
                                   className="border-r pr-2 text-3xl hover:text-red-700 cursor-pointer bg-transparent hover:bg-transparent"
                                   asChild
                                 >
-                                  {cartSpinnerIndex === item._id ? (
-                                    <Spinner
-                                      variant="spinner"
-                                      className="text-red-700 text-2xl"
-                                    />
-                                  ) : (
-                                    <IoBagOutline className="text-black" />
-                                  )}
+                                  <IoBagOutline className="text-black" />
                                 </DialogTrigger>
                               ) : (
                                 <div
@@ -413,20 +406,27 @@ export default function Page() {
                                 </div>
 
                                 {/* Confirm Button */}
-                                <div className="mt-6 flex justify-end">
-                                  <Button
-                                    onClick={() =>
-                                      handleAddToCart(
-                                        item._id,
-                                        selectedColor,
-                                        selectedSize
-                                      )
-                                    }
-                                    className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg"
-                                  >
-                                    Confirm
-                                  </Button>
-                                </div>
+                                {cartSpinnerIndex === item._id ? (
+                                  <Spinner
+                                    variant="spinner"
+                                    className="text-red-700 text-2xl"
+                                  />
+                                ) : (
+                                  <div className="mt-6 flex justify-end">
+                                    <Button
+                                      onClick={() =>
+                                        handleAddToCart(
+                                          item._id,
+                                          selectedColor,
+                                          selectedSize
+                                        )
+                                      }
+                                      className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg"
+                                    >
+                                      Confirm
+                                    </Button>
+                                  </div>
+                                )}
                               </DialogContent>
                             </Dialog>
                           )}

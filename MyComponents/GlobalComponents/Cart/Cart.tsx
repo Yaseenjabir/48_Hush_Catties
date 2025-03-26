@@ -171,7 +171,7 @@ export default function Cart() {
             <div className="w-full flex items-center justify-between">
               <span className="font-bold text-lg">SUBTOTAL : </span>
               <span className="text-red-700 font-extrabold">
-                ${calculateSubtotal()}
+                € {calculateSubtotal()}
               </span>
             </div>
             <div className="flex items-center justify-center gap-4">

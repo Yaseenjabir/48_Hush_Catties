@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 const Orders = ({ data }) => {
   const router = useRouter();
 
+  console.log("data is : ", data);
+
   return (
     <div className="p-6 min-h-screen">
       <Heading text="Orders" />
@@ -33,7 +35,7 @@ const Orders = ({ data }) => {
               </div>
               <div className="space-y-2">
                 <p className="text-lg font-semibold">
-                  Total: € {order.amountTotal.toFixed(2)}
+                  Total: € {(order.amountTotal / 100).toFixed(2)}
                 </p>
                 <p className="text-sm text-gray-500">
                   Date: {new Date(order.createdAt).toLocaleString()}

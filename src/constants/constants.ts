@@ -23,6 +23,7 @@ export const CREATE_ADDRESS = "/api/address/createAddress";
 
 // payment
 export const CREATE_PAYMENT = "/api/payment/create-payment-intent";
+export const VERIFY_SESSION = "/api/payment/verifySession";
 
 // wishlist
 export const TOGGLE_WISHLIST = "/api/wishlist/toggleWishlist";

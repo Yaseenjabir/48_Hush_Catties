@@ -12,6 +12,7 @@
     "@emotion/cache": "^11.14.0",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
+    "@esbuild/linux-x64": "^0.25.1",
     "@heroui/button": "^2.2.13",
     "@heroui/react": "^2.7.2",
     "@heroui/system": "^2.4.10",

@@ -67,7 +67,7 @@ export default function Login({ setShowLogin }: { setShowLogin: any }) {
         let path: string;
         setCookie("authToken", res.data.token, 1);
         if (flag === "addtocart") {
-          path = "/addtocart";
+          path = "/shop";
         } else if (flag === "cart") {
           path = "/cart";
         } else if (flag === "my-account") {

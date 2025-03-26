@@ -159,7 +159,10 @@ export default function Header2() {
                 <p className="text-sm hidden text-nowrap lg:block">
                   {items.length} item - €{" "}
                   {items.reduce((accumulatorr, currItem) => {
-                    return accumulatorr + Number(currItem.productId.price);
+                    return (
+                      accumulatorr +
+                      Number(currItem.productId.price * currItem.quantity)
+                    );
                   }, 0)}
                 </p>
               </div>
@@ -191,7 +194,11 @@ export default function Header2() {
           />
           <ul className="mt-10 flex flex-col">
             {menus.map((item: any, index: number) => (
-              <li key={index} className="border-b border-gray-400 py-4">
+              <li
+                onClick={() => setIsSlided(true)}
+                key={index}
+                className="border-b border-gray-400 py-4"
+              >
                 <Link href={item.redirectTo}>{item.item}</Link>
               </li>
             ))}

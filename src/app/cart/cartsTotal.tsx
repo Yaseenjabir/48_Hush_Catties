@@ -66,17 +66,6 @@ export default function CartsTotal() {
 
     const shippingAddress = form.getValues();
 
-    // const modifiedValues = {
-    //   name: shippingAddress.name,
-    //   email: shippingAddress.email,
-    //   address: {
-    //     ...Object.fromEntries(
-    //       Object.entries(shippingAddress).filter(
-    //         ([key]) => key !== "name" && key !== "email"
-    //       )
-    //     ),
-    //   },
-    // };
     const token = getCookie("authToken");
 
     const products = items.map((item) => {
